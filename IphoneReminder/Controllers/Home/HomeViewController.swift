@@ -6,6 +6,14 @@
 //
 
 import UIKit
+import RealmSwift
+
+struct Category {
+    let title: String
+    let iconImage: UIImage
+    let tintColor: UIColor
+    var count: Int
+}
 
 enum Kind: Int, CaseIterable {
     case today
@@ -58,12 +66,36 @@ enum Kind: Int, CaseIterable {
 final class HomeViewController: BaseViewController {
     let mainView = HomeView()
     let kindList = Kind.allCases
+    var categoryList = [
+        Category(title: Kind.today.title, iconImage: Kind.today.iconImage, tintColor: Kind.today.tintColor, count: 0),
+        Category(title: Kind.schedule.title, iconImage: Kind.schedule.iconImage, tintColor: Kind.schedule.tintColor, count: 0),
+        Category(title: Kind.total.title, iconImage: Kind.total.iconImage, tintColor: Kind.total.tintColor, count: 0),
+        Category(title: Kind.flag.title, iconImage: Kind.flag.iconImage, tintColor: Kind.flag.tintColor, count: 0),
+        Category(title: Kind.completed.title, iconImage: Kind.completed.iconImage, tintColor: Kind.completed.tintColor, count: 0)
+    ]
+    var todoList: Results<TodoModel>!
+    var totalCount = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
         configureCollectionView()
         mainView.newTodoButton.addTarget(self, action: #selector(showAddTodoVC), for: .touchUpInside)
+        getTodoData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(#function)
+    }
+   
+    func getTodoData() {
+        let realm = try! Realm()
+        
+        todoList = realm.objects(TodoModel.self)
+        categoryList[Kind.total.rawValue].count = todoList.count
+        print(todoList.count)
+        mainView.collectionView.reloadData()
     }
     
     func configureCollectionView() {
@@ -73,6 +105,9 @@ final class HomeViewController: BaseViewController {
     
     @objc func showAddTodoVC() {
         let addTodoVC = AddTodoViewController()
+        addTodoVC.completionHandler = {
+            self.getTodoData()
+        }
         let nav = UINavigationController(rootViewController: addTodoVC)
         present(nav, animated: true)
     }
@@ -94,11 +129,31 @@ final class HomeViewController: BaseViewController {
     override func loadView() {
         view = mainView
     }
+    
+    private func showTotalVC() {
+        let totalVC = TotalViewController()
+        navigationController?.pushViewController(totalVC, animated: true)
+    }
+    
+    private func showDetailVC(kind: Kind) {
+        switch kind {
+        case .today:
+            break
+        case .schedule:
+            break
+        case .total:
+            showTotalVC()
+        case .flag:
+            break
+        case .completed:
+            break
+        }
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return kindList.count
+        return categoryList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -107,10 +162,13 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
         
         let index = indexPath.row
-        cell.configureCell(iconImage: kindList[index].iconImage, tintColor: kindList[index].tintColor, title: kindList[index].title, count: 0)
+        cell.configureCell(iconImage: categoryList[index].iconImage, tintColor: categoryList[index].tintColor, title: categoryList[index].title, count: categoryList[index].count)
         
         return cell
     }
     
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let index = indexPath.row
+        showDetailVC(kind: kindList[index])
+    }
 }

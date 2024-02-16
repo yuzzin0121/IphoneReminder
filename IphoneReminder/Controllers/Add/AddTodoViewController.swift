@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 enum TodoInfo: Int, CaseIterable {
     case memo
@@ -33,19 +34,28 @@ enum TodoInfo: Int, CaseIterable {
     }
 }
 
-struct Todo {
-    var memo: [String: String?]
-    var deadLineDate: String
-    var tag: String
-    var priority: String
-    let image: String
-}
-
 class AddTodoViewController: BaseViewController {
     let mainView = AddView()
-    var todo: Todo = Todo(memo: ["제목":nil, "내용": nil], deadLineDate: "", tag: "", priority: "", image: "")
-    var kindList = TodoInfo.allCases
+    lazy var cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonClicked))
     
+    lazy var addButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addButtonClicked))
+    
+    var kindList = TodoInfo.allCases
+    var todo: TodoModel? = nil
+    var memoTitle: String?
+    var memo: String?
+    var deadLineDate = Date()
+    var tag: String?
+    var priority: String?
+    var isValid: Bool = false {
+        didSet {
+            print(isValid)
+            addButton.isEnabled = isValid ? true : false
+        }
+    }
+    var completionHandler: (() -> Void)?
+    
+    // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,17 +65,27 @@ class AddTodoViewController: BaseViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(setPrioirty), name: NSNotification.Name("setPriority"), object: nil)
     }
     
+    private func isValidValue() -> Bool {
+        print(memoTitle, tag, priority)
+        if let memoTitle, let tag, let priority {
+            return true
+        }
+        return false
+    }
+    
     @objc func setTag(notification: NSNotification) {
         let userInfo = notification.userInfo
         guard let value = userInfo?["tag"] as? String else { return }
-        todo.tag = value
+        tag = value
+        isValid = isValidValue()
         mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.tag.rawValue, section: 0)], with: .none)
     }
     
     @objc func setPrioirty(notification: NSNotification) {
         let userInfo = notification.userInfo
         guard let value = userInfo?["priority"] as? String else { return }
-        todo.priority = value
+        priority = value
+        isValid = isValidValue()
         mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.priority.rawValue, section: 0)], with: .none)
     }
     
@@ -74,14 +94,31 @@ class AddTodoViewController: BaseViewController {
         mainView.tableView.dataSource = self
     }
     
+    // 취소 버튼 클릭했을 때
     @objc func cancelButtonClicked() {
         dismiss(animated: true)
     }
     
+    // 추가 버튼 클릭했을 때
     @objc func addButtonClicked() {
+        let realm = try! Realm()
+        print(realm.configuration.fileURL)
+        setTodo()
+        try! realm.write {
+            guard let todo = todo else { return }
+            realm.add(todo)
+        }
+        completionHandler?()
         dismiss(animated: true)
     }
     
+    func setTodo() {
+        if let memoTitle, let tag, let priority {
+            todo = TodoModel(title: memoTitle, memo: memo, deadLineDate: deadLineDate, createdAt: Date(), tag: tag, priority: priority)
+        }
+    }
+    
+    // 셀 클릭했을 때 타입에 따라 다른 화면으로 이동
     private func showEditVC(type: TodoInfo) {
         switch type {
         case .memo:
@@ -97,49 +134,61 @@ class AddTodoViewController: BaseViewController {
         }
     }
     
+    // 메모 편집 화면으로 이동
     private func showMemoVC() {
         let memoVC = MemoViewController()
         memoVC.completionHandler = { title, content in
-            self.todo.memo["제목"] = title
-            self.todo.memo["내용"] = content
+            self.memoTitle = title
+            self.memo = content
+            self.isValid = self.isValidValue()
             self.mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.memo.rawValue, section: 0)], with: .none)
         }
         navigationController?.pushViewController(memoVC, animated: true)
     }
     
+    // 마감일 편집 화면으로 이동
     private func showDeadLineDateVC() {
         let deadLineDateVC = DeadLineDateViewController()
         deadLineDateVC.completionHandler = { dateString in
-            self.todo.deadLineDate = dateString
+            self.deadLineDate = dateString
+            self.isValid = self.isValidValue()
             self.mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.deadLineDate.rawValue, section: 0)], with: .none)
         }
         navigationController?.pushViewController(deadLineDateVC, animated: true)
     }
     
+    // 태그 편집 화면으로 이동
     private func showTagVC() {
         let tagVC = TagViewController()
         navigationController?.pushViewController(tagVC, animated: true)
     }
     
+    // 우선순위 편집 화면으로 이동
     private func priorityVC() {
         let priorityVC = PriorityViewController()
         navigationController?.pushViewController(priorityVC, animated: true)
     }
     
+    // 이미지 추가 화면으로 이동
     private func addImageVC() {
         let addImageVC = AddImageViewController()
         navigationController?.pushViewController(addImageVC, animated: true)
     }
     
+    private func changeFormat(date: Date) -> String? {
+        // 선택된 날짜를 문자열로 변환하여 출력
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd" // 원하는 날짜 형식 지정
+        return dateFormatter.string(from: date)
+    }
+    
     private func configureNavigationItem() {
         navigationItem.title = "새로운 할 일"
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-    
-        let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonClicked))
         
-        let addButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addButtonClicked))
         navigationItem.leftBarButtonItem = cancelButton
         navigationItem.rightBarButtonItem = addButton
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
     
     override func loadView() {
@@ -160,9 +209,7 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.selectionStyle = .none
             cell.backgroundColor = ColorStyle.darkBlack
-            if let title = todo.memo["제목"], let memo = todo.memo["내용"] {
-                cell.configureCell(title: title, memo: memo)
-            }
+            cell.configureCell(title: memoTitle, memo: memo)
             
             return cell
         } else {
@@ -170,17 +217,16 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
                 return UITableViewCell()
             }
             
-            var value = ""
+            var value: String? = ""
             
             switch indexPath.row {
             case TodoInfo.deadLineDate.rawValue:
-                value = todo.deadLineDate
+                value = changeFormat(date: deadLineDate ?? Date())
             case TodoInfo.tag.rawValue:
-                value = todo.tag
+                value = tag
             case TodoInfo.priority.rawValue:
-                value = todo.priority
+                value = priority
             default: break
-                
             }
             
             cell.selectionStyle = .none
@@ -195,6 +241,7 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
         return kindList[indexPath.row].cellHeight
     }
     
+    // 셀 클릭했을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         showEditVC(type: kindList[indexPath.row])
     }

@@ -13,7 +13,6 @@ extension UINavigationController {
         appearence.backgroundColor = .black
         navigationBar.standardAppearance = appearence
         navigationBar.scrollEdgeAppearance = appearence
-        navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
 
 
     }

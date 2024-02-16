@@ -17,4 +17,6 @@ enum ImageStyle {
 
     static let arrowRight = UIImage(systemName: "chevron.right")!
     static let photoFill = UIImage(systemName: "photo.fill")!
+    
+    static let threeDot = UIImage(systemName: "ellipsis")!
 }

@@ -34,7 +34,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     }
     func configureLayout() {
         iconImageView.snp.makeConstraints { make in
-            make.size.equalTo(24)
+            make.size.equalTo(36)
             make.leading.top.equalToSuperview().offset(8)
         }
         
@@ -58,7 +58,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         titleLabel.font = .systemFont(ofSize: 15)
         titleLabel.textColor = .lightGray
         countLabel.textColor = .white
-        countLabel.font = .boldSystemFont(ofSize: 22)
+        countLabel.font = .boldSystemFont(ofSize: 24)
     }
     
     required init?(coder: NSCoder) {

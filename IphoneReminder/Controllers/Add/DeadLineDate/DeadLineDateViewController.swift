@@ -9,7 +9,7 @@ import UIKit
 
 class DeadLineDateViewController: BaseViewController {
     let mainView = DeadLineDateView()
-    var completionHandler: ((String) -> Void)?
+    var completionHandler: ((Date) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,10 +20,8 @@ class DeadLineDateViewController: BaseViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         let selectedDate: Date = mainView.datePicker.date
-        let dateString = changeFormat(date: selectedDate)
-        if let dateString = dateString {
-            completionHandler?(dateString)
-        }
+//        let dateString = changeFormat(date: selectedDate)
+        completionHandler?(selectedDate)
     }
     
     func changeFormat(date: Date) -> String? {
