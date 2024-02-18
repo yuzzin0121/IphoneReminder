@@ -16,8 +16,9 @@ class TodoModel: Object {
     @Persisted var createdAt: Date
     @Persisted var tag: String
     @Persisted var priority: String
+    @Persisted var isCompleted: Bool
     
-    convenience init(title: String, memo: String? = nil, deadLineDate: Date, createdAt: Date, tag: String, priority: String) {
+    convenience init(title: String, memo: String? = nil, deadLineDate: Date, createdAt: Date, tag: String, priority: String, isCompleted: Bool = false) {
         self.init()
         self.title = title
         self.memo = memo
@@ -25,5 +26,6 @@ class TodoModel: Object {
         self.createdAt = createdAt
         self.tag = tag
         self.priority = priority
+        self.isCompleted = isCompleted
     }
 }

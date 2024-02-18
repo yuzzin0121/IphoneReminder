@@ -19,4 +19,7 @@ enum ImageStyle {
     static let photoFill = UIImage(systemName: "photo.fill")!
     
     static let threeDot = UIImage(systemName: "ellipsis")!
+    
+    static let checkCircle = UIImage(systemName: "checkmark.circle.fill")!
+    static let circle = UIImage(systemName: "circle")!
 }

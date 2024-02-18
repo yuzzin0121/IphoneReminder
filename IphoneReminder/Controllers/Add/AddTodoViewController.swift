@@ -54,6 +54,7 @@ class AddTodoViewController: BaseViewController {
         }
     }
     var completionHandler: (() -> Void)?
+    var todoTableRepository = TodoTableRepository()
     
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
@@ -66,7 +67,6 @@ class AddTodoViewController: BaseViewController {
     }
     
     private func isValidValue() -> Bool {
-        print(memoTitle, tag, priority)
         if let memoTitle, let tag, let priority {
             return true
         }
@@ -101,13 +101,10 @@ class AddTodoViewController: BaseViewController {
     
     // 추가 버튼 클릭했을 때
     @objc func addButtonClicked() {
-        let realm = try! Realm()
-        print(realm.configuration.fileURL)
         setTodo()
-        try! realm.write {
-            guard let todo = todo else { return }
-            realm.add(todo)
-        }
+    
+        guard let todo = todo else { return }
+        todoTableRepository.createItem(todo)
         completionHandler?()
         dismiss(animated: true)
     }

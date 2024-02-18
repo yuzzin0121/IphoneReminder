@@ -8,6 +8,7 @@
 import UIKit
 
 class TodoTableViewCell: UITableViewCell {
+    let isCompletedIcon = UIImageView()
     let titleLabel = UILabel()
     let memoLabel = UILabel()
     let deadLineDateLabel = UILabel()
@@ -27,13 +28,26 @@ class TodoTableViewCell: UITableViewCell {
     
     func configureCell(todo: TodoModel?) {
         guard let todo = todo else { return }
-        titleLabel.text = todo.title
+        let priorityString = getPriorityString(priority: todo.priority)
+        titleLabel.text = "\(priorityString)\(todo.title)"
         if let memo = todo.memo {
             memoLabel.text = memo
         }
         deadLineDateLabel.text = changeFormat(date: todo.deadLineDate)
-        tagLabel.text = todo.tag
+        tagLabel.text = "#\(todo.tag)"
+        
         priorityLabel.text = todo.priority
+        isCompletedIcon.image = todo.isCompleted ? ImageStyle.checkCircle : ImageStyle.circle
+    }
+    
+    func getPriorityString(priority: String) -> String {
+        switch priority {
+        case "하": return "!"
+        case "중": return "!!"
+        case "상": return "!!!"
+        default:
+            return ""
+        }
     }
     
     private func changeFormat(date: Date) -> String? {
@@ -49,24 +63,30 @@ class TodoTableViewCell: UITableViewCell {
     }
     
     func configureHierarchy() {
-        [titleLabel, memoLabel, deadLineDateLabel, tagLabel, priorityLabel].forEach {
+        [isCompletedIcon, titleLabel, memoLabel, deadLineDateLabel, tagLabel, priorityLabel].forEach {
             contentView.addSubview($0)
         }
     }
     func configureLayout() {
+        isCompletedIcon.snp.makeConstraints { make in
+            make.size.equalTo(18)
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().offset(12)
+        }
         tagLabel.snp.makeConstraints { make in
-            make.leading.top.equalToSuperview().inset(8)
+            make.top.equalToSuperview().inset(8)
+            make.leading.equalTo(isCompletedIcon.snp.trailing).offset(12)
             make.height.equalTo(13)
         }
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(tagLabel)
             make.top.equalTo(tagLabel.snp.bottom).offset(8)
-            make.height.equalTo(15)
+            make.height.equalTo(16)
         }
         memoLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel)
             make.leading.equalTo(titleLabel.snp.trailing).offset(8)
-            make.height.equalTo(15)
+            make.height.equalTo(16)
         }
         deadLineDateLabel.snp.makeConstraints { make in
             make.bottom.trailing.equalToSuperview().inset(8)
@@ -81,9 +101,12 @@ class TodoTableViewCell: UITableViewCell {
         contentView.backgroundColor = ColorStyle.deepDarkGray
         contentView.layer.cornerRadius = 10
         contentView.clipsToBounds = true
-        tagLabel.design(font: .systemFont(ofSize: 13), textColor: .systemGray6)
-        titleLabel.design(font: .boldSystemFont(ofSize: 15))
-        memoLabel.design(font: .boldSystemFont(ofSize: 15))
+        isCompletedIcon.image = ImageStyle.circle
+        isCompletedIcon.contentMode = .scaleAspectFit
+        isCompletedIcon.tintColor = .white
+        tagLabel.design(font: .systemFont(ofSize: 13), textColor: .systemBlue)
+        titleLabel.design(font: .boldSystemFont(ofSize: 16))
+        memoLabel.design(font: .boldSystemFont(ofSize: 14), textColor: .lightGray)
         deadLineDateLabel.design(font: .systemFont(ofSize: 12), textColor: .systemGray6)
         priorityLabel.design(font: .systemFont(ofSize: 13), textColor: .lightGray)
     }

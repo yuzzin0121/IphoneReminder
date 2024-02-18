@@ -12,7 +12,7 @@ enum Filter: Int, CaseIterable {
     case total
     case deadLine
     case title
-    case rowPriority
+    case lowPriority
     case highPriority
     
     var title: String {
@@ -20,8 +20,18 @@ enum Filter: Int, CaseIterable {
         case .total: return "전체 보기"
         case .deadLine: return "마감일 순으로 보기"
         case .title: return "제목 순으로 보기"
-        case .rowPriority: return "우선순위 낮음 만 보기"
+        case .lowPriority: return "우선순위 낮음 만 보기"
         case .highPriority: return "우선순위 높음 만 보기"
+        }
+    }
+    
+    var sortKey: String {
+        switch self {
+        case .total: return "createdAt"
+        case .deadLine: return "deadLineDate"
+        case .title: return "title"
+        case .lowPriority: return "하"
+        case .highPriority: return "상"
         }
     }
 }
@@ -54,6 +64,8 @@ class TotalViewController: BaseViewController {
     lazy var selectedHighPriority = { (action: UIAction) in
         self.getHighPrioirty()
     }
+    
+    var todoTableRepository = TodoTableRepository()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,49 +83,33 @@ class TotalViewController: BaseViewController {
         let seletedPriority = {(action: UIAction) in
                 print(action.title)}
         filterButton.menu = UIMenu(children: [
-                UIAction(title: "전체보기", state: .on, handler: selectedTotal),
-                UIAction(title: "마감일 순으로 보기", handler: selectedDeadLine),
-                UIAction(title: "제목 순으로 보기", handler: selectedTotal),
-                UIAction(title: "우선순위 낮음 만 보기", handler: selectedTotal),
-                UIAction(title: "우선순위 높음 만 보기", handler: selectedHighPriority)])
+            UIAction(title: Filter.total.title, state: .on, handler: selectedTotal),
+            UIAction(title: Filter.deadLine.title, handler: selectedDeadLine),
+            UIAction(title: Filter.title.title, handler: selectedTotal),
+            UIAction(title: Filter.lowPriority.title, handler: selectedTotal),
+            UIAction(title: Filter.highPriority.title, handler: selectedHighPriority)])
         filterButton.showsMenuAsPrimaryAction = true
         filterButton.changesSelectionAsPrimaryAction = true
     }
     
     private func getDeadLine() {
-        let realm = try! Realm()
-        
-        todoList = realm.objects(TodoModel.self)
-            .sorted(byKeyPath: "deadLineDate", ascending: true)
+        todoList = todoTableRepository.sortData(key: Filter.deadLine.sortKey)
     }
     
     private func getTitle() {
-        let realm = try! Realm()
-        
-        todoList = realm.objects(TodoModel.self)
-            .sorted(byKeyPath: "title", ascending: true)
+        todoList = todoTableRepository.sortData(key: Filter.title.sortKey)
     }
     
     private func getLowPrioirty() {
-        let realm = try! Realm()
-        
-        todoList = realm.objects(TodoModel.self).where {
-            $0.priority == "하"
-        }
+        todoList = todoTableRepository.fetchPriorityFilter(Filter.lowPriority.sortKey)
     }
+    
     private func getHighPrioirty() {
-        let realm = try! Realm()
-        
-        todoList = realm.objects(TodoModel.self).where {
-            $0.priority == "상"
-        }
+        todoList = todoTableRepository.fetchPriorityFilter(Filter.highPriority.sortKey)
     }
     
     private func getTotalTodo() {
-        let realm = try! Realm()
-        
-        todoList = realm.objects(TodoModel.self)
-//        mainView.tableView.reloadData()
+        todoList = todoTableRepository.sortData(key: Filter.total.sortKey)
     }
     
     private func configureTableView() {
@@ -131,7 +127,16 @@ class TotalViewController: BaseViewController {
     override func loadView() {
         view = mainView
     }
+    
+    func updateIsComplete(item: TodoModel) {
+        todoTableRepository.updateisCompleted(item)
+        getTotalTodo()
+    }
 
+    func deleteTodo(item: TodoModel) {
+        todoTableRepository.deleteItem(item)
+        getTotalTodo()
+    }
 }
 
 extension TotalViewController: UITableViewDelegate, UITableViewDataSource {
@@ -148,5 +153,25 @@ extension TotalViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configureCell(todo: todoList[indexPath.row])
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = todoList[indexPath.row]
+        updateIsComplete(item: item)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제하기") {
+            (_,_, completionHandler) in
+            let item = self.todoList[indexPath.row]
+            self.showAlert(title: "삭제", message: "\(item.title)을 정말 삭제하시겠습니까?") {
+                self.deleteTodo(item: item)
+            }
+            completionHandler(true)
+        }
+        
+        deleteAction.backgroundColor = UIColor.red
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        return configuration
     }
 }

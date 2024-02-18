@@ -15,54 +15,6 @@ struct Category {
     var count: Int
 }
 
-enum Kind: Int, CaseIterable {
-    case today
-    case schedule
-    case total
-    case flag
-    case completed
-    
-    var title: String {
-        switch self {
-        case .today: return "오늘"
-        case .schedule: return "예정"
-        case .total: return "전체"
-        case .flag: return "깃발 표시"
-        case .completed: return "완료됨"
-        }
-    }
-    
-    var iconImage: UIImage {
-        switch self {
-        case .today:
-            return ImageStyle.lightbulbCircleFill
-        case .schedule:
-            return ImageStyle.calendarCircleFill
-        case .total:
-            return ImageStyle.trayCircleFill
-        case .flag:
-            return ImageStyle.flagCircleFill
-        case .completed:
-            return ImageStyle.checkmarkCircleFill
-        }
-    }
-    
-    var tintColor: UIColor {
-        switch self {
-        case .today:
-            return .blue
-        case .schedule:
-            return .systemRed
-        case .total:
-            return .gray
-        case .flag:
-            return .yellow
-        case .completed:
-            return .orange
-        }
-    }
-}
-
 final class HomeViewController: BaseViewController {
     let mainView = HomeView()
     let kindList = Kind.allCases
@@ -75,27 +27,41 @@ final class HomeViewController: BaseViewController {
     ]
     var todoList: Results<TodoModel>!
     var totalCount = 0
+    var todoTableRepository = TodoTableRepository()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
         configureCollectionView()
         mainView.newTodoButton.addTarget(self, action: #selector(showAddTodoVC), for: .touchUpInside)
-        getTodoData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print(#function)
+        getTodoData()
+        getCompleted()
+        getTodayTodo()
+        getScheduleTodo()
+        mainView.collectionView.reloadData()
+    }
+    
+    func getCompleted() {
+        categoryList[Kind.completed.rawValue].count = todoTableRepository.fetchCompletedCount()
     }
    
     func getTodoData() {
-        let realm = try! Realm()
-        
-        todoList = realm.objects(TodoModel.self)
+        todoList = todoTableRepository.fetch()
         categoryList[Kind.total.rawValue].count = todoList.count
         print(todoList.count)
-        mainView.collectionView.reloadData()
+    }
+    
+    func getTodayTodo() {
+        categoryList[Kind.today.rawValue].count = todoTableRepository.fetchTodayTodoCount()
+    }
+    
+    func getScheduleTodo() {
+        categoryList[Kind.schedule.rawValue].count = todoTableRepository.fetchScheduleTodoCount()
     }
     
     func configureCollectionView() {
