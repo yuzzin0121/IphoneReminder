@@ -37,7 +37,6 @@ enum TodoInfo: Int, CaseIterable {
 class AddTodoViewController: BaseViewController {
     let mainView = AddView()
     lazy var cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonClicked))
-    
     lazy var addButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addButtonClicked))
     
     var kindList = TodoInfo.allCases
@@ -53,6 +52,7 @@ class AddTodoViewController: BaseViewController {
             addButton.isEnabled = isValid ? true : false
         }
     }
+    var image: UIImage? = nil
     var completionHandler: (() -> Void)?
     var todoTableRepository = TodoTableRepository()
     
@@ -105,6 +105,10 @@ class AddTodoViewController: BaseViewController {
     
         guard let todo = todo else { return }
         todoTableRepository.createItem(todo)
+        // Filemanager를 통해 이미지 파일을 도큐먼트에 저장
+        if let image {
+            saveImageToDocument(image: image, filename: "\(todo.id)")
+        }
         completionHandler?()
         dismiss(animated: true)
     }
@@ -169,6 +173,10 @@ class AddTodoViewController: BaseViewController {
     // 이미지 추가 화면으로 이동
     private func addImageVC() {
         let addImageVC = AddImageViewController()
+        addImageVC.completionHandler = { image in
+            self.image = image
+            self.mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.addImage.rawValue, section: 0)], with: .automatic)
+        }
         navigationController?.pushViewController(addImageVC, animated: true)
     }
     
@@ -223,6 +231,10 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
                 value = tag
             case TodoInfo.priority.rawValue:
                 value = priority
+            case TodoInfo.addImage.rawValue:
+                if let image {
+                    cell.seletecimageView.image = image
+                }
             default: break
             }
             

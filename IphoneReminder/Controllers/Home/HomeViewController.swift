@@ -43,7 +43,6 @@ final class HomeViewController: BaseViewController {
         getCompleted()
         getTodayTodo()
         getScheduleTodo()
-        mainView.collectionView.reloadData()
     }
     
     func getCompleted() {
@@ -54,6 +53,7 @@ final class HomeViewController: BaseViewController {
         todoList = todoTableRepository.fetch()
         categoryList[Kind.total.rawValue].count = todoList.count
         print(todoList.count)
+        mainView.collectionView.reloadData()
     }
     
     func getTodayTodo() {

@@ -44,11 +44,7 @@ class TotalViewController: BaseViewController {
         return button
     }()
     let filterList = Filter.allCases
-    var todoList: Results<TodoModel>! {
-        didSet {
-            mainView.tableView.reloadData()
-        }
-    }
+    var todoList: Results<TodoModel>!
     lazy var selectedDeadLine = { (action: UIAction) in
         self.getDeadLine()
     }
@@ -75,13 +71,7 @@ class TotalViewController: BaseViewController {
         getTotalTodo()
     }
     
-    @objc private func filterButtonClicked() {
-        
-    }
-    
     func configureFilterButton() {
-        let seletedPriority = {(action: UIAction) in
-                print(action.title)}
         filterButton.menu = UIMenu(children: [
             UIAction(title: Filter.total.title, state: .on, handler: selectedTotal),
             UIAction(title: Filter.deadLine.title, handler: selectedDeadLine),
@@ -94,22 +84,27 @@ class TotalViewController: BaseViewController {
     
     private func getDeadLine() {
         todoList = todoTableRepository.sortData(key: Filter.deadLine.sortKey)
+        mainView.tableView.reloadData()
     }
     
     private func getTitle() {
         todoList = todoTableRepository.sortData(key: Filter.title.sortKey)
+        mainView.tableView.reloadData()
     }
     
     private func getLowPrioirty() {
         todoList = todoTableRepository.fetchPriorityFilter(Filter.lowPriority.sortKey)
+        mainView.tableView.reloadData()
     }
     
     private func getHighPrioirty() {
         todoList = todoTableRepository.fetchPriorityFilter(Filter.highPriority.sortKey)
+        mainView.tableView.reloadData()
     }
     
     private func getTotalTodo() {
         todoList = todoTableRepository.sortData(key: Filter.total.sortKey)
+        mainView.tableView.reloadData()
     }
     
     private func configureTableView() {
@@ -151,6 +146,10 @@ extension TotalViewController: UITableViewDelegate, UITableViewDataSource {
         cell.selectionStyle = .none
         cell.backgroundColor = .black
         cell.configureCell(todo: todoList[indexPath.row])
+        // 도큐먼트 폴더에 있는 이미지를 셀에 보여주기
+        if let image = loadImageToDocument(filename: "\(todoList[indexPath.row].id)") {
+            cell.selectedimageView.image = image
+        }
         
         return cell
     }

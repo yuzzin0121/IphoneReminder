@@ -10,6 +10,7 @@ import UIKit
 final class InfoTableViewCell: UITableViewCell {
     let titleLabel = UILabel()
     let valueLabel = UILabel()
+    let seletecimageView = UIImageView()
     let rightAllowImageView = UIImageView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -32,7 +33,7 @@ final class InfoTableViewCell: UITableViewCell {
     }
     
     func configureHierarchy() {
-        [titleLabel, valueLabel, rightAllowImageView].forEach {
+        [titleLabel, valueLabel, rightAllowImageView, seletecimageView].forEach {
             contentView.addSubview($0)
         }
     }
@@ -48,6 +49,12 @@ final class InfoTableViewCell: UITableViewCell {
             make.centerY.equalToSuperview()
             make.leading.equalTo(titleLabel.snp.trailing).offset(12)
             make.height.equalTo(20)
+            make.trailing.equalTo(rightAllowImageView.snp.leading).offset(-12)
+        }
+        
+        seletecimageView.snp.makeConstraints { make in
+            make.size.equalTo(24)
+            make.centerY.equalToSuperview()
             make.trailing.equalTo(rightAllowImageView.snp.leading).offset(-12)
         }
         
@@ -69,6 +76,8 @@ final class InfoTableViewCell: UITableViewCell {
         rightAllowImageView.image = ImageStyle.arrowRight
         rightAllowImageView.contentMode = .scaleAspectFit
         rightAllowImageView.tintColor = .white
+        
+        seletecimageView.contentMode = .scaleAspectFill
     }
     
     required init?(coder: NSCoder) {

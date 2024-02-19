@@ -10,7 +10,12 @@ import PhotosUI
 
 class AddImageViewController: BaseViewController {
     let selectedImageView = UIImageView()
+    let addGalleryImageButton = AddImageButton()
+    let takeACamareaButton = AddImageButton()
+    let searchImageButton = AddImageButton()
     var configuration = PHPickerConfiguration()
+    
+    var completionHandler: ((UIImage) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,30 +27,78 @@ class AddImageViewController: BaseViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        if let image = selectedImageView.image {
+            completionHandler?(image)
+        }
+    }
+    
+    @objc private func addGalleryImageButtonClicked() {
+        let imagePickerVC = UIImagePickerController()
+        imagePickerVC.sourceType = .photoLibrary
+        imagePickerVC.allowsEditing = true
+        imagePickerVC.delegate = self
+        present(imagePickerVC, animated: true)
+    }
+    
+    @objc private func takeACamareaButtonClicked() {
+        let imagePickerVC = UIImagePickerController()
+        imagePickerVC.sourceType = .camera
+        present(imagePickerVC, animated: true)
+    }
+    
+    @objc private func searchImageButtonClicked() {
+        let searchImageVC = SearchImageViewController()
+        searchImageVC.completionHandler = { link in
+            if let link = link {
+                self.setImage(link: link)
+            }
+        }
+        navigationController?.pushViewController(searchImageVC, animated: true)
+    }
+    
+    // 선택된 링크로 이미지 설정
+    private func setImage(link: String) {
+        if let url = URL(string: link) {
+            selectedImageView.kf.setImage(with: url, placeholder: ImageStyle.photoFill)
+        } else {
+            selectedImageView.image = ImageStyle.photoFill
+        }
     }
     
     private func configureNavigationItem() {
         navigationItem.title = "우선 순위"
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addImage))
-    }
-    
-    @objc func addImage() {
-        configuration.filter = .any(of: [.images])
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        self.present(picker, animated: true)
     }
     
     func configureHierarchy() {
         view.addSubview(selectedImageView)
+        view.addSubview(addGalleryImageButton)
+        view.addSubview(takeACamareaButton)
+        view.addSubview(searchImageButton)
     }
+    
     func configureLayout() {
         selectedImageView.snp.makeConstraints { make in
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
-            make.centerY.equalToSuperview()
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
             make.size.equalTo(200)
+        }
+        addGalleryImageButton.snp.makeConstraints { make in
+            make.top.equalTo(selectedImageView.snp.bottom).offset(24)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(300)
+            make.height.equalTo(44)
+        }
+        takeACamareaButton.snp.makeConstraints { make in
+            make.top.equalTo(addGalleryImageButton.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(300)
+            make.height.equalTo(44)
+        }
+        searchImageButton.snp.makeConstraints { make in
+            make.top.equalTo(takeACamareaButton.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(300)
+            make.height.equalTo(44)
         }
     }
     func configureView() {
@@ -55,25 +108,26 @@ class AddImageViewController: BaseViewController {
         selectedImageView.contentMode = .scaleAspectFit
         selectedImageView.layer.cornerRadius = 5
         selectedImageView.clipsToBounds = true
+        
+        addGalleryImageButton.setTitle("갤러리에서 선택", for: .normal)
+        takeACamareaButton.setTitle("카메라 촬영", for: .normal)
+        searchImageButton.setTitle("이미지 검색", for: .normal)
+        
+        addGalleryImageButton.addTarget(self, action: #selector(addGalleryImageButtonClicked), for: .touchUpInside)
+        takeACamareaButton.addTarget(self, action: #selector(takeACamareaButtonClicked), for: .touchUpInside)
+        searchImageButton.addTarget(self, action: #selector(searchImageButtonClicked), for: .touchUpInside)
     }
 }
 
-extension AddImageViewController: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        let itemProvider = results.first?.itemProvider
-        if let itemProvider = itemProvider,
-           itemProvider.canLoadObject(ofClass: UIImage.self) {
-            itemProvider.loadObject(ofClass: UIImage.self) { image, error in
-                DispatchQueue.main.async {
-                    self.selectedImageView.image  = image as? UIImage
-                    self.selectedImageView.contentMode = .scaleAspectFill
-                }
-            }
-        } else {
-            print("이미지를 추가하는 과정에서 알 수 없는 오류가 났당...")
-        }
+extension AddImageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true)
     }
     
-    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            selectedImageView.image = pickedImage
+        }
+        dismiss(animated: true)
+    }
 }

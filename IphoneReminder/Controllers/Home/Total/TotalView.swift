@@ -20,8 +20,6 @@ class TotalView: BaseView {
         }
     }
     
-    
-    
     override func configureView() {
         tableView.backgroundColor = .black
         tableView.showsVerticalScrollIndicator = false

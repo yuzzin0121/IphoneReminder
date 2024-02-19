@@ -13,7 +13,7 @@ class TodoTableViewCell: UITableViewCell {
     let memoLabel = UILabel()
     let deadLineDateLabel = UILabel()
     let tagLabel = UILabel()
-    let priorityLabel = UILabel()
+    let selectedimageView = UIImageView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -36,7 +36,6 @@ class TodoTableViewCell: UITableViewCell {
         deadLineDateLabel.text = changeFormat(date: todo.deadLineDate)
         tagLabel.text = "#\(todo.tag)"
         
-        priorityLabel.text = todo.priority
         isCompletedIcon.image = todo.isCompleted ? ImageStyle.checkCircle : ImageStyle.circle
     }
     
@@ -63,7 +62,7 @@ class TodoTableViewCell: UITableViewCell {
     }
     
     func configureHierarchy() {
-        [isCompletedIcon, titleLabel, memoLabel, deadLineDateLabel, tagLabel, priorityLabel].forEach {
+        [isCompletedIcon, titleLabel, memoLabel, deadLineDateLabel, tagLabel, selectedimageView].forEach {
             contentView.addSubview($0)
         }
     }
@@ -89,12 +88,16 @@ class TodoTableViewCell: UITableViewCell {
             make.height.equalTo(16)
         }
         deadLineDateLabel.snp.makeConstraints { make in
-            make.bottom.trailing.equalToSuperview().inset(8)
+            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.leading.equalTo(titleLabel)
+            make.bottom.equalToSuperview().inset(8)
             make.height.equalTo(12)
         }
-        priorityLabel.snp.makeConstraints { make in
-            make.trailing.top.equalToSuperview().inset(8)
-            make.height.equalTo(13)
+        
+        selectedimageView.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(8)
+            make.size.equalTo(70)
         }
     }
     func configureView() {
@@ -108,7 +111,8 @@ class TodoTableViewCell: UITableViewCell {
         titleLabel.design(font: .boldSystemFont(ofSize: 16))
         memoLabel.design(font: .boldSystemFont(ofSize: 14), textColor: .lightGray)
         deadLineDateLabel.design(font: .systemFont(ofSize: 12), textColor: .systemGray6)
-        priorityLabel.design(font: .systemFont(ofSize: 13), textColor: .lightGray)
+//        priorityLabel.design(font: .systemFont(ofSize: 13), textColor: .lightGray)
+        selectedimageView.contentMode = .scaleAspectFill
     }
     
     required init?(coder: NSCoder) {
