@@ -23,7 +23,6 @@ final class HomeViewController: BaseViewController {
         Category(kind: Kind.today, title: Kind.today.title, iconImage: Kind.today.iconImage, backgroundColor: Kind.today.backgroundColor, count: 0),
         Category(kind: Kind.schedule, title: Kind.schedule.title, iconImage: Kind.schedule.iconImage, backgroundColor: Kind.schedule.backgroundColor, count: 0),
         Category(kind: Kind.total, title: Kind.total.title, iconImage: Kind.total.iconImage, backgroundColor: Kind.total.backgroundColor, count: 0),
-        Category(kind: Kind.flag, title: Kind.flag.title, iconImage: Kind.flag.iconImage, backgroundColor: Kind.flag.backgroundColor, count: 0),
         Category(kind: Kind.completed, title: Kind.completed.title, iconImage: Kind.completed.iconImage, backgroundColor: Kind.completed.backgroundColor, count: 0)
     ]
     var todoList: Results<TodoModel>!
@@ -33,7 +32,7 @@ final class HomeViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
-        configureCollectionView()
+        configureDelegate()
         mainView.newTodoButton.addTarget(self, action: #selector(showAddTodoVC), for: .touchUpInside)
     }
     
@@ -65,9 +64,11 @@ final class HomeViewController: BaseViewController {
         categoryList[Kind.schedule.rawValue].count = todoTableRepository.fetchScheduleTodo().count
     }
     
-    func configureCollectionView() {
+    func configureDelegate() {
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
+        mainView.listTableView.delegate = self
+        mainView.listTableView.dataSource = self
     }
     
     @objc func showAddTodoVC() {
@@ -77,6 +78,15 @@ final class HomeViewController: BaseViewController {
             self.getTodoData()
         }
         let nav = UINavigationController(rootViewController: addTodoVC)
+        present(nav, animated: true)
+    }
+    
+    
+    // 목록 추가버튼 클릭했을 때
+    @objc private func addListButtonClicked() {
+        let addListVC = AddListViewController()
+    
+        let nav = UINavigationController(rootViewController: addListVC)
         present(nav, animated: true)
     }
     
@@ -90,7 +100,7 @@ final class HomeViewController: BaseViewController {
         
         let newTodoButton = UIBarButtonItem(customView: mainView.newTodoButton)
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let addListButton = UIBarButtonItem(title: "목록 추가", style: .plain, target: self, action: nil)
+        let addListButton = UIBarButtonItem(title: "목록 추가", style: .plain, target: self, action: #selector(addListButtonClicked))
         self.toolbarItems = [newTodoButton, flexibleSpace, addListButton]
     }
     
@@ -126,4 +136,22 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let index = indexPath.row
         showTodoListVC(kind: categoryList[index].kind)
     }
+}
+
+
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "listCell") else {
+            return UITableViewCell()
+        }
+        
+        
+        return cell
+    }
+    
+    
 }

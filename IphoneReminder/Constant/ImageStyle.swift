@@ -22,4 +22,6 @@ enum ImageStyle {
     
     static let checkCircle = UIImage(systemName: "checkmark.circle.fill")!
     static let circle = UIImage(systemName: "circle")!
+    
+    static let list = UIImage(systemName: "list.bullet")!
 }

@@ -17,6 +17,7 @@ class TodoModel: Object {
     @Persisted var tag: String
     @Persisted var priority: String
     @Persisted var isCompleted: Bool
+    @Persisted(originProperty: "todos") var listItem: LinkingObjects<ListItem>
     
     convenience init(title: String, memo: String? = nil, deadLineDate: Date, createdAt: Date, tag: String, priority: String, isCompleted: Bool = false) {
         self.init()
@@ -30,8 +31,15 @@ class TodoModel: Object {
     }
 }
 
-class CustomCategory: Object {
+class ListItem: Object {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var title: String
     @Persisted var colorName: String
+    @Persisted var todos: List<TodoModel>
+    
+    convenience init(title: String, colorName: String) {
+        self.init()
+        self.title = title
+        self.colorName = colorName
+    }
 }

@@ -39,8 +39,6 @@ class TodoListViewController: BaseViewController {
             todoList = todoTableRepository.fetchScheduleTodo()
         case .total:
             todoList = todoTableRepository.fetch()
-        case .flag:
-            break
         case .completed:
             todoList = todoTableRepository.fetchCompleted()
         }
@@ -83,8 +81,6 @@ class TodoListViewController: BaseViewController {
             todoList = todoTableRepository.fetchScheduleSortData(key: sortKey)
         case .total:
             todoList = todoTableRepository.sortData(key: sortKey)
-        case .flag:
-            break
         case .completed:
             todoList = todoTableRepository.fetchCompletedSortData(key: sortKey)
         case nil:
@@ -102,8 +98,6 @@ class TodoListViewController: BaseViewController {
             todoList = todoTableRepository.fetchScheduleSortData(key: sortKey)
         case .total:
             todoList = todoTableRepository.sortData(key: sortKey)
-        case .flag:
-            break
         case .completed:
             todoList = todoTableRepository.fetchCompletedSortData(key: sortKey)
         case nil:
@@ -121,8 +115,6 @@ class TodoListViewController: BaseViewController {
             todoList = todoTableRepository.fetchSchedulePriorityFilter(sortKey)
         case .total:
             todoList = todoTableRepository.fetchPriorityFilter(sortKey)
-        case .flag:
-            break
         case .completed:
             todoList = todoTableRepository.fetchCompletedPriorityFilter(sortKey)
         case nil:
@@ -140,8 +132,6 @@ class TodoListViewController: BaseViewController {
             todoList = todoTableRepository.fetchSchedulePriorityFilter(sortKey)
         case .total:
             todoList = todoTableRepository.fetchPriorityFilter(sortKey)
-        case .flag:
-            break
         case .completed:
             todoList = todoTableRepository.fetchCompletedPriorityFilter(sortKey)
         case nil:

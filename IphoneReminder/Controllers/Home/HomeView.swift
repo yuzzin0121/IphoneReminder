@@ -20,12 +20,13 @@ class HomeView: BaseView {
     }()
     
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViweFlowLayout())
+    let listTableView = UITableView()
     
     private func configureCollectionViweFlowLayout()  -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
-        let spacing = 24
-        let itemSize: CGFloat = (UIScreen.main.bounds.width - CGFloat(spacing)) / 2
-        layout.itemSize = CGSize(width: itemSize, height: 72)
+        let spacing = 12
+        let itemSize: CGFloat = (UIScreen.main.bounds.width-40 - CGFloat(spacing)) / 2
+        layout.itemSize = CGSize(width: itemSize, height: 78)
         layout.minimumLineSpacing = 12
         layout.scrollDirection = .vertical
         return layout
@@ -33,12 +34,20 @@ class HomeView: BaseView {
     
     override func configureHierarchy() {
         addSubview(collectionView)
+        addSubview(listTableView)
     }
     
     override func configureLayout() {
         collectionView.snp.makeConstraints { make in
             make.verticalEdges.equalTo(safeAreaLayoutGuide).inset(24)
-            make.horizontalEdges.equalToSuperview().inset(6)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.height.greaterThanOrEqualTo(190)
+        }
+        
+        listTableView.snp.makeConstraints { make in
+            make.top.equalTo(collectionView.snp.bottom).offset(24)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(16)
         }
     }
     
@@ -47,5 +56,9 @@ class HomeView: BaseView {
         collectionView.backgroundColor = .black
         collectionView.isScrollEnabled = false
         collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
+        
+        listTableView.backgroundColor = .gray
+        listTableView.showsVerticalScrollIndicator = false
+        listTableView.register(UITableViewCell.self, forCellReuseIdentifier: "listCell")
     }
 }

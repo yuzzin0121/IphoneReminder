@@ -10,5 +10,7 @@ import UIKit
 enum ColorStyle {
     static let darkBlack = UIColor(named: "darkBlack")!
     static let deepDarkGray = UIColor(named: "deepDarkGray")!
+    static let customDarkGray = UIColor(named: "customDarkGray")!
+    static let customGray = UIColor(named: "customGray")!
 }
 

@@ -11,7 +11,6 @@ enum Kind: Int, CaseIterable {
     case today
     case schedule
     case total
-    case flag
     case completed
     
     var fetchValue: String {
@@ -19,7 +18,6 @@ enum Kind: Int, CaseIterable {
         case .today: return "deadLineDate"
         case .schedule: return ""
         case .total: return ""
-        case .flag: return ""
         case .completed: return "isCompleted"
         }
     }
@@ -29,7 +27,6 @@ enum Kind: Int, CaseIterable {
         case .today: return "오늘"
         case .schedule: return "예정"
         case .total: return "전체"
-        case .flag: return "깃발 표시"
         case .completed: return "완료됨"
         }
     }
@@ -42,8 +39,6 @@ enum Kind: Int, CaseIterable {
             return ImageStyle.calendar
         case .total:
             return ImageStyle.tray
-        case .flag:
-            return ImageStyle.flag
         case .completed:
             return ImageStyle.checkmark
         }
@@ -57,8 +52,6 @@ enum Kind: Int, CaseIterable {
             return .systemRed
         case .total:
             return .darkGray
-        case .flag:
-            return .systemYellow
         case .completed:
             return .systemOrange
         }

@@ -36,7 +36,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     }
     func configureLayout() {
         imageBackgroundView.snp.makeConstraints { make in
-            make.size.equalTo(36)
+            make.size.equalTo(32)
             make.leading.top.equalToSuperview().offset(8)
         }
         
@@ -49,7 +49,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
             make.height.equalTo(15)
             make.leading.equalTo(imageBackgroundView)
             make.top.equalTo(imageBackgroundView.snp.bottom).offset(8)
-            make.bottom.equalToSuperview().inset(8)
+            make.bottom.lessThanOrEqualToSuperview().inset(8)
         }
         
         countLabel.snp.makeConstraints { make in
@@ -63,10 +63,10 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         contentView.clipsToBounds = true
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.tintColor = .white
-        titleLabel.font = .systemFont(ofSize: 15)
-        titleLabel.textColor = .lightGray
+        titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        titleLabel.textColor = .systemGray3
         countLabel.textColor = .white
-        countLabel.font = .boldSystemFont(ofSize: 24)
+        countLabel.font = .boldSystemFont(ofSize: 26)
     }
     
     override func draw(_ rect: CGRect) {
