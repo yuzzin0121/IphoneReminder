@@ -8,7 +8,7 @@
 import UIKit
 
 class TodoTableViewCell: UITableViewCell {
-    let isCompletedIcon = UIImageView()
+    let isCompletedIcon = UIButton()
     let titleLabel = UILabel()
     let memoLabel = UILabel()
     let deadLineDateLabel = UILabel()
@@ -29,14 +29,16 @@ class TodoTableViewCell: UITableViewCell {
     func configureCell(todo: TodoModel?) {
         guard let todo = todo else { return }
         let priorityString = getPriorityString(priority: todo.priority)
-        titleLabel.text = "\(priorityString)\(todo.title)"
+        titleLabel.text = "\(priorityString) \(todo.title)"
+        titleLabel.asColor(targetString: priorityString, color: .systemBlue)
         if let memo = todo.memo {
             memoLabel.text = memo
         }
         deadLineDateLabel.text = changeFormat(date: todo.deadLineDate)
         tagLabel.text = "#\(todo.tag)"
         
-        isCompletedIcon.image = todo.isCompleted ? ImageStyle.checkCircle : ImageStyle.circle
+        let image = todo.isCompleted ? ImageStyle.checkCircle : ImageStyle.circle
+        isCompletedIcon.setImage(image, for: .normal)
     }
     
     func getPriorityString(priority: String) -> String {
@@ -56,11 +58,6 @@ class TodoTableViewCell: UITableViewCell {
         return dateFormatter.string(from: date)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
-    }
-    
     func configureHierarchy() {
         [isCompletedIcon, titleLabel, memoLabel, deadLineDateLabel, tagLabel, selectedimageView].forEach {
             contentView.addSubview($0)
@@ -69,48 +66,43 @@ class TodoTableViewCell: UITableViewCell {
     func configureLayout() {
         isCompletedIcon.snp.makeConstraints { make in
             make.size.equalTo(18)
-            make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().offset(12)
-        }
-        tagLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(8)
-            make.leading.equalTo(isCompletedIcon.snp.trailing).offset(12)
-            make.height.equalTo(13)
+            make.leading.top.equalToSuperview().offset(12)
         }
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(tagLabel)
-            make.top.equalTo(tagLabel.snp.bottom).offset(8)
-            make.height.equalTo(16)
+            make.leading.equalTo(isCompletedIcon.snp.trailing).offset(12)
+            make.top.equalToSuperview().inset(12)
+            make.height.equalTo(17)
         }
         memoLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel)
+            make.centerY.equalTo(titleLabel)
             make.leading.equalTo(titleLabel.snp.trailing).offset(8)
-            make.height.equalTo(16)
+            make.height.equalTo(15)
         }
         deadLineDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.top.equalTo(titleLabel.snp.bottom).offset(6)
             make.leading.equalTo(titleLabel)
-            make.bottom.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().inset(12)
             make.height.equalTo(12)
         }
-        
+        tagLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(6)
+            make.leading.equalTo(deadLineDateLabel.snp.trailing).offset(12)
+            make.height.equalTo(13)
+        }
         selectedimageView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(8)
-            make.trailing.equalToSuperview().inset(8)
+            make.top.bottom.equalToSuperview().inset(12)
+            make.trailing.equalToSuperview().inset(12)
             make.size.equalTo(70)
         }
     }
     func configureView() {
-        contentView.backgroundColor = ColorStyle.deepDarkGray
-        contentView.layer.cornerRadius = 10
-        contentView.clipsToBounds = true
-        isCompletedIcon.image = ImageStyle.circle
-        isCompletedIcon.contentMode = .scaleAspectFit
+        contentView.backgroundColor = .black
+        isCompletedIcon.setImage(ImageStyle.circle, for: .normal)
         isCompletedIcon.tintColor = .white
         tagLabel.design(font: .systemFont(ofSize: 13), textColor: .systemBlue)
         titleLabel.design(font: .boldSystemFont(ofSize: 16))
         memoLabel.design(font: .boldSystemFont(ofSize: 14), textColor: .lightGray)
-        deadLineDateLabel.design(font: .systemFont(ofSize: 12), textColor: .systemGray6)
+        deadLineDateLabel.design(font: .systemFont(ofSize: 12), textColor: .gray)
 //        priorityLabel.design(font: .systemFont(ofSize: 13), textColor: .lightGray)
         selectedimageView.contentMode = .scaleAspectFill
     }

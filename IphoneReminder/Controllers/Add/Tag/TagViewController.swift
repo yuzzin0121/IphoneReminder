@@ -11,12 +11,20 @@ import SnapKit
 class TagViewController: BaseViewController {
     let tagTextField = DarkTextField()
     let tagPlaceholder = "태그를 입력하세요"
+    var tag: String? = nil
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
         configureHierarchy()
         configureLayout()
         configureView()
+        setValue()
+    }
+    
+    func setValue() {
+        if let tag {
+            tagTextField.text = tag
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

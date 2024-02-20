@@ -9,12 +9,14 @@ import UIKit
 
 class DeadLineDateViewController: BaseViewController {
     let mainView = DeadLineDateView()
+    var deadLineDate: Date? = nil
     var completionHandler: ((Date) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureNavigationItem()
+        setValue()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -22,6 +24,12 @@ class DeadLineDateViewController: BaseViewController {
         let selectedDate: Date = mainView.datePicker.date
 //        let dateString = changeFormat(date: selectedDate)
         completionHandler?(selectedDate)
+    }
+    
+    func setValue() {
+        if let deadLineDate {
+            mainView.datePicker.date = deadLineDate
+        }
     }
     
     func changeFormat(date: Date) -> String? {

@@ -26,29 +26,10 @@ final class TodoTableRepository {
     }
     
     // R
+    // Total
     func fetch() -> Results<TodoModel> {
         return realm.objects(TodoModel.self)
     }
-    
-    func fetchCompletedCount() -> Int {
-        return realm.objects(TodoModel.self).where {
-            $0.isCompleted == true
-        }.count
-    }
-    
-    func fetchTodayTodoCount() -> Int {
-        let calendar = Calendar.current
-        let todayStart = calendar.startOfDay(for: Date())
-        let todayEnd = calendar.date(byAdding: .day, value: 1, to: todayStart)!
-        let predicate = NSPredicate(format: "deadLineDate >= %@ AND deadLineDate < %@", argumentArray: [todayStart, todayEnd])
-        return realm.objects(TodoModel.self).filter(predicate).count
-    }
-    
-    func fetchScheduleTodoCount() -> Int {
-        let now = Date()
-        return realm.objects(TodoModel.self).filter("deadLineDate > %@", now).count
-    }
-    
     func fetchPriorityFilter(_ filter: String) -> Results<TodoModel> {
         return realm.objects(TodoModel.self).where {
             $0.priority == filter
@@ -59,14 +40,76 @@ final class TodoTableRepository {
             .sorted(byKeyPath: key, ascending: true)
     }
     
+    // Completed
+    func fetchCompleted() -> Results<TodoModel> {
+        return realm.objects(TodoModel.self).where {
+            $0.isCompleted == true
+        }
+    }
+    func fetchCompletedPriorityFilter(_ filter: String) -> Results<TodoModel> {
+        return realm.objects(TodoModel.self).where {
+            $0.isCompleted == true && $0.priority == filter
+        }.sorted(byKeyPath: "createdAt", ascending: false)
+    }
+    func fetchCompletedSortData(key: String) -> Results<TodoModel> {
+        return realm.objects(TodoModel.self).where {
+            $0.isCompleted == true
+        }.sorted(byKeyPath: key, ascending: true)
+    }
+    
+    
+    // Today
+    func fetchTodayTodo() -> Results<TodoModel> {
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        let todayEnd = calendar.date(byAdding: .day, value: 1, to: todayStart)!
+        let predicate = NSPredicate(format: "deadLineDate >= %@ AND deadLineDate < %@", argumentArray: [todayStart, todayEnd])
+        return realm.objects(TodoModel.self).filter(predicate)
+    }
+    func fetchTodayPriorityFilter(_ filter: String) -> Results<TodoModel> {
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        let todayEnd = calendar.date(byAdding: .day, value: 1, to: todayStart)!
+        let predicate = NSPredicate(format: "deadLineDate >= %@ AND deadLineDate < %@", argumentArray: [todayStart, todayEnd])
+        
+        return realm.objects(TodoModel.self).filter(predicate).where {
+            $0.priority == filter
+        }.sorted(byKeyPath: "createdAt", ascending: false)
+    }
+    func fetchTodaySortData(key: String) -> Results<TodoModel> {
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        let todayEnd = calendar.date(byAdding: .day, value: 1, to: todayStart)!
+        let predicate = NSPredicate(format: "deadLineDate >= %@ AND deadLineDate < %@", argumentArray: [todayStart, todayEnd])
+        return realm.objects(TodoModel.self).filter(predicate).sorted(byKeyPath: key, ascending: true)
+    }
+    
+    // Schedule
+    func fetchScheduleTodo() -> Results<TodoModel> {
+        let now = Date()
+        return realm.objects(TodoModel.self).filter("deadLineDate > %@", now)
+    }
+    func fetchSchedulePriorityFilter(_ filter: String) -> Results<TodoModel> {
+        let now = Date()
+        return realm.objects(TodoModel.self).filter("deadLineDate > %@", now).where {
+            $0.priority == filter
+        }.sorted(byKeyPath: "createdAt", ascending: false)
+    }
+    func fetchScheduleSortData(key: String) -> Results<TodoModel> {
+        let now = Date()
+        return realm.objects(TodoModel.self).filter("deadLineDate > %@", now)
+            .sorted(byKeyPath: key, ascending: true)
+    }
+    
     // U
-    func updateItem(id: ObjectId, title: Int, memo: String?,
+    func updateItem(id: ObjectId, title: String, memo: String?,
                     deadLineDate: Date, tag: String, priority: String) {
         do {
             try realm.write {
                 realm.create(TodoModel.self,
                              value: ["id": id,
                                      "title": title,
+                                     "memo": memo ?? nil,
                                      "deadLineDate": deadLineDate,
                                      "tag": tag,
                                      "priority": priority],
@@ -97,8 +140,4 @@ final class TodoTableRepository {
             print(error)
         }
     }
-    
-    
-    
-    
 }

@@ -23,9 +23,7 @@ class TodoListView: BaseView {
     override func configureView() {
         tableView.backgroundColor = .black
         tableView.showsVerticalScrollIndicator = false
-        tableView.separatorStyle = .none
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
-        tableView.rowHeight = 80
+        tableView.rowHeight = 60
         tableView.register(TodoTableViewCell.self, forCellReuseIdentifier: TodoTableViewCell.identifier)
     }
 }

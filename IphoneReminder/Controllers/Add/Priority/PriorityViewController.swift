@@ -8,10 +8,10 @@
 import UIKit
 
 class PriorityViewController: BaseViewController {
+    lazy var segmentedControl = UISegmentedControl(items: setItem())
+    var priorityList = Priority.allCases
     
-    let items = ["하", "중", "상"]
-    lazy var segmentedControl = UISegmentedControl(items: items)
-   
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
@@ -23,8 +23,15 @@ class PriorityViewController: BaseViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         let priorityIndex = segmentedControl.selectedSegmentIndex
-        NotificationCenter.default.post(name: NSNotification.Name("setPriority"), object: nil, userInfo: ["priority": items[priorityIndex]])
-   
+        NotificationCenter.default.post(name: NSNotification.Name("setPriority"), object: nil, userInfo: ["priority": priorityList[priorityIndex].title])
+    }
+    
+    private func setItem() -> [String] {
+        var items: [String] = []
+        for priority in priorityList {
+            items.append(priority.title)
+        }
+        return items
     }
     
     private func configureNavigationItem() {

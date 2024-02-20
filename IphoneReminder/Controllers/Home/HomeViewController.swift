@@ -9,6 +9,7 @@ import UIKit
 import RealmSwift
 
 struct Category {
+    let kind: Kind
     let title: String
     let iconImage: UIImage
     let backgroundColor: UIColor
@@ -19,11 +20,11 @@ final class HomeViewController: BaseViewController {
     let mainView = HomeView()
     let kindList = Kind.allCases
     var categoryList = [
-        Category(title: Kind.today.title, iconImage: Kind.today.iconImage, backgroundColor: Kind.today.backgroundColor, count: 0),
-        Category(title: Kind.schedule.title, iconImage: Kind.schedule.iconImage, backgroundColor: Kind.schedule.backgroundColor, count: 0),
-        Category(title: Kind.total.title, iconImage: Kind.total.iconImage, backgroundColor: Kind.total.backgroundColor, count: 0),
-        Category(title: Kind.flag.title, iconImage: Kind.flag.iconImage, backgroundColor: Kind.flag.backgroundColor, count: 0),
-        Category(title: Kind.completed.title, iconImage: Kind.completed.iconImage, backgroundColor: Kind.completed.backgroundColor, count: 0)
+        Category(kind: Kind.today, title: Kind.today.title, iconImage: Kind.today.iconImage, backgroundColor: Kind.today.backgroundColor, count: 0),
+        Category(kind: Kind.schedule, title: Kind.schedule.title, iconImage: Kind.schedule.iconImage, backgroundColor: Kind.schedule.backgroundColor, count: 0),
+        Category(kind: Kind.total, title: Kind.total.title, iconImage: Kind.total.iconImage, backgroundColor: Kind.total.backgroundColor, count: 0),
+        Category(kind: Kind.flag, title: Kind.flag.title, iconImage: Kind.flag.iconImage, backgroundColor: Kind.flag.backgroundColor, count: 0),
+        Category(kind: Kind.completed, title: Kind.completed.title, iconImage: Kind.completed.iconImage, backgroundColor: Kind.completed.backgroundColor, count: 0)
     ]
     var todoList: Results<TodoModel>!
     var totalCount = 0
@@ -46,7 +47,7 @@ final class HomeViewController: BaseViewController {
     }
     
     func getCompleted() {
-        categoryList[Kind.completed.rawValue].count = todoTableRepository.fetchCompletedCount()
+        categoryList[Kind.completed.rawValue].count = todoTableRepository.fetchCompleted().count
     }
    
     func getTodoData() {
@@ -57,11 +58,11 @@ final class HomeViewController: BaseViewController {
     }
     
     func getTodayTodo() {
-        categoryList[Kind.today.rawValue].count = todoTableRepository.fetchTodayTodoCount()
+        categoryList[Kind.today.rawValue].count = todoTableRepository.fetchTodayTodo().count
     }
     
     func getScheduleTodo() {
-        categoryList[Kind.schedule.rawValue].count = todoTableRepository.fetchScheduleTodoCount()
+        categoryList[Kind.schedule.rawValue].count = todoTableRepository.fetchScheduleTodo().count
     }
     
     func configureCollectionView() {
@@ -71,6 +72,7 @@ final class HomeViewController: BaseViewController {
     
     @objc func showAddTodoVC() {
         let addTodoVC = AddTodoViewController()
+        addTodoVC.previousVC = PreviousVC.home
         addTodoVC.completionHandler = {
             self.getTodoData()
         }
@@ -96,25 +98,12 @@ final class HomeViewController: BaseViewController {
         view = mainView
     }
     
-    private func showTotalVC() {
-        let totalVC = TodoListViewController()
-        navigationController?.pushViewController(totalVC, animated: true)
+    private func showTodoListVC(kind: Kind) {
+        let todoListVC = TodoListViewController()
+        todoListVC.type = kind
+        navigationController?.pushViewController(todoListVC, animated: true)
     }
     
-    private func showDetailVC(kind: Kind) {
-        switch kind {
-        case .today:
-            break
-        case .schedule:
-            break
-        case .total:
-            showTotalVC()
-        case .flag:
-            break
-        case .completed:
-            break
-        }
-    }
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -135,6 +124,6 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let index = indexPath.row
-        showDetailVC(kind: kindList[index])
+        showTodoListVC(kind: categoryList[index].kind)
     }
 }

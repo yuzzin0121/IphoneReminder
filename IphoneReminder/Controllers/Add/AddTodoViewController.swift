@@ -8,36 +8,23 @@
 import UIKit
 import RealmSwift
 
-enum TodoInfo: Int, CaseIterable {
-    case memo
-    case deadLineDate
-    case tag
-    case priority
-    case addImage
-    
-    var title: String {
-        switch self {
-        case .memo: return ""
-        case .deadLineDate: return "마감일"
-        case .tag: return "태그"
-        case .priority: return "우선 순위"
-        case .addImage: return "이미지 추가"
-        }
-    }
-    
-    var cellHeight: CGFloat {
-        switch self {
-        case .memo: return 150
-        case .deadLineDate, .tag, .priority, .addImage:
-            return 54
-        }
-    }
-}
-
 class AddTodoViewController: BaseViewController {
     let mainView = AddView()
     lazy var cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonClicked))
-    lazy var addButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addButtonClicked))
+    lazy var addButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addButtonClicked))
+        var title = ""
+        switch previousVC {
+        case .home:
+            title = "추가"
+        case .list:
+            title = "수정"
+        case nil:
+            print("previousVC: nil 절대 안나오겠지")
+        }
+        button.title = title
+        return button
+    }()
     
     var kindList = TodoInfo.allCases
     var todo: TodoModel? = nil
@@ -55,11 +42,12 @@ class AddTodoViewController: BaseViewController {
     var image: UIImage? = nil
     var completionHandler: (() -> Void)?
     var todoTableRepository = TodoTableRepository()
+    var previousVC: PreviousVC? = nil
     
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        isValid = isValidValue()
         configureNavigationItem()
         configureTableView()
         NotificationCenter.default.addObserver(self, selector: #selector(setTag), name: NSNotification.Name("setTag"), object: nil)
@@ -78,7 +66,7 @@ class AddTodoViewController: BaseViewController {
         guard let value = userInfo?["tag"] as? String else { return }
         tag = value
         isValid = isValidValue()
-        mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.tag.rawValue, section: 0)], with: .none)
+        mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.tag.rawValue, section: 0)], with: .none)
     }
     
     @objc func setPrioirty(notification: NSNotification) {
@@ -86,7 +74,7 @@ class AddTodoViewController: BaseViewController {
         guard let value = userInfo?["priority"] as? String else { return }
         priority = value
         isValid = isValidValue()
-        mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.priority.rawValue, section: 0)], with: .none)
+        mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.priority.rawValue, section: 0)], with: .none)
     }
     
     func configureTableView() {
@@ -104,11 +92,24 @@ class AddTodoViewController: BaseViewController {
         setTodo()
     
         guard let todo = todo else { return }
-        todoTableRepository.createItem(todo)
-        // Filemanager를 통해 이미지 파일을 도큐먼트에 저장
-        if let image {
-            saveImageToDocument(image: image, filename: "\(todo.id)")
+        
+        switch previousVC {
+        case .home:
+            todoTableRepository.createItem(todo)
+            // Filemanager를 통해 이미지 파일을 도큐먼트에 저장
+            if let image {
+                saveImageToDocument(image: image, filename: "\(todo.id)")
+            }
+        case .list:
+            todoTableRepository.updateItem(id: todo.id, title: todo.title, memo: todo.memo,
+                                           deadLineDate: todo.deadLineDate, tag: todo.tag, priority: todo.priority)
+            if let image {
+                saveImageToDocument(image: image, filename: "\(todo.id)")
+            }
+        case nil:
+            fatalError("왜 nil임??;;;ㅠㅠㅠ")
         }
+
         completionHandler?()
         dismiss(animated: true)
     }
@@ -138,6 +139,8 @@ class AddTodoViewController: BaseViewController {
     // 메모 편집 화면으로 이동
     private func showMemoVC() {
         let memoVC = MemoViewController()
+        memoVC.memoTitle = memoTitle
+        memoVC.memo = memo
         memoVC.completionHandler = { title, content in
             self.memoTitle = title
             self.memo = content
@@ -150,6 +153,7 @@ class AddTodoViewController: BaseViewController {
     // 마감일 편집 화면으로 이동
     private func showDeadLineDateVC() {
         let deadLineDateVC = DeadLineDateViewController()
+        deadLineDateVC.deadLineDate = deadLineDate
         deadLineDateVC.completionHandler = { dateString in
             self.deadLineDate = dateString
             self.isValid = self.isValidValue()
@@ -161,12 +165,14 @@ class AddTodoViewController: BaseViewController {
     // 태그 편집 화면으로 이동
     private func showTagVC() {
         let tagVC = TagViewController()
+        tagVC.tag = tag
         navigationController?.pushViewController(tagVC, animated: true)
     }
     
     // 우선순위 편집 화면으로 이동
     private func priorityVC() {
         let priorityVC = PriorityViewController()
+//        priorityVC.priority = priority
         navigationController?.pushViewController(priorityVC, animated: true)
     }
     
@@ -175,6 +181,7 @@ class AddTodoViewController: BaseViewController {
         let addImageVC = AddImageViewController()
         addImageVC.completionHandler = { image in
             self.image = image
+            self.isValid = self.isValidValue()
             self.mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.addImage.rawValue, section: 0)], with: .automatic)
         }
         navigationController?.pushViewController(addImageVC, animated: true)
@@ -188,7 +195,17 @@ class AddTodoViewController: BaseViewController {
     }
     
     private func configureNavigationItem() {
-        navigationItem.title = "새로운 할 일"
+
+        if let previousVC {
+            switch previousVC {
+            case .home:
+                navigationItem.title = "새로운 할 일"
+            case .list:
+                navigationItem.title = "할 일 수정"
+            }
+        } else {
+            navigationItem.title = "새로운 할 일"
+        }
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         
         navigationItem.leftBarButtonItem = cancelButton
@@ -226,7 +243,7 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
             
             switch indexPath.row {
             case TodoInfo.deadLineDate.rawValue:
-                value = changeFormat(date: deadLineDate ?? Date())
+                value = changeFormat(date: deadLineDate)
             case TodoInfo.tag.rawValue:
                 value = tag
             case TodoInfo.priority.rawValue:

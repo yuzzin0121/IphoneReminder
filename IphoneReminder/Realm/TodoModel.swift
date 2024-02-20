@@ -29,3 +29,9 @@ class TodoModel: Object {
         self.isCompleted = isCompleted
     }
 }
+
+class CustomCategory: Object {
+    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted var title: String
+    @Persisted var colorName: String
+}
