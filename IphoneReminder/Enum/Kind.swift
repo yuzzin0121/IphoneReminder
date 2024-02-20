@@ -37,30 +37,30 @@ enum Kind: Int, CaseIterable {
     var iconImage: UIImage {
         switch self {
         case .today:
-            return ImageStyle.lightbulbCircleFill
+            return ImageStyle.lightbulb
         case .schedule:
-            return ImageStyle.calendarCircleFill
+            return ImageStyle.calendar
         case .total:
-            return ImageStyle.trayCircleFill
+            return ImageStyle.tray
         case .flag:
-            return ImageStyle.flagCircleFill
+            return ImageStyle.flag
         case .completed:
-            return ImageStyle.checkmarkCircleFill
+            return ImageStyle.checkmark
         }
     }
     
-    var tintColor: UIColor {
+    var backgroundColor: UIColor {
         switch self {
         case .today:
-            return .blue
+            return .systemBlue
         case .schedule:
             return .systemRed
         case .total:
-            return .gray
+            return .darkGray
         case .flag:
-            return .yellow
+            return .systemYellow
         case .completed:
-            return .orange
+            return .systemOrange
         }
     }
 }

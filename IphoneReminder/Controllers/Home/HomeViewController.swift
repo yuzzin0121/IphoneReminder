@@ -11,7 +11,7 @@ import RealmSwift
 struct Category {
     let title: String
     let iconImage: UIImage
-    let tintColor: UIColor
+    let backgroundColor: UIColor
     var count: Int
 }
 
@@ -19,11 +19,11 @@ final class HomeViewController: BaseViewController {
     let mainView = HomeView()
     let kindList = Kind.allCases
     var categoryList = [
-        Category(title: Kind.today.title, iconImage: Kind.today.iconImage, tintColor: Kind.today.tintColor, count: 0),
-        Category(title: Kind.schedule.title, iconImage: Kind.schedule.iconImage, tintColor: Kind.schedule.tintColor, count: 0),
-        Category(title: Kind.total.title, iconImage: Kind.total.iconImage, tintColor: Kind.total.tintColor, count: 0),
-        Category(title: Kind.flag.title, iconImage: Kind.flag.iconImage, tintColor: Kind.flag.tintColor, count: 0),
-        Category(title: Kind.completed.title, iconImage: Kind.completed.iconImage, tintColor: Kind.completed.tintColor, count: 0)
+        Category(title: Kind.today.title, iconImage: Kind.today.iconImage, backgroundColor: Kind.today.backgroundColor, count: 0),
+        Category(title: Kind.schedule.title, iconImage: Kind.schedule.iconImage, backgroundColor: Kind.schedule.backgroundColor, count: 0),
+        Category(title: Kind.total.title, iconImage: Kind.total.iconImage, backgroundColor: Kind.total.backgroundColor, count: 0),
+        Category(title: Kind.flag.title, iconImage: Kind.flag.iconImage, backgroundColor: Kind.flag.backgroundColor, count: 0),
+        Category(title: Kind.completed.title, iconImage: Kind.completed.iconImage, backgroundColor: Kind.completed.backgroundColor, count: 0)
     ]
     var todoList: Results<TodoModel>!
     var totalCount = 0
@@ -97,7 +97,7 @@ final class HomeViewController: BaseViewController {
     }
     
     private func showTotalVC() {
-        let totalVC = TotalViewController()
+        let totalVC = TodoListViewController()
         navigationController?.pushViewController(totalVC, animated: true)
     }
     
@@ -128,7 +128,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
         
         let index = indexPath.row
-        cell.configureCell(iconImage: categoryList[index].iconImage, tintColor: categoryList[index].tintColor, title: categoryList[index].title, count: categoryList[index].count)
+        cell.configureCell(iconImage: categoryList[index].iconImage, backgroundColor: categoryList[index].backgroundColor, title: categoryList[index].title, count: categoryList[index].count)
         
         return cell
     }

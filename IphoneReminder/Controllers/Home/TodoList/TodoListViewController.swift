@@ -36,8 +36,8 @@ enum Filter: Int, CaseIterable {
     }
 }
 
-class TotalViewController: BaseViewController {
-    let mainView = TotalView()
+class TodoListViewController: BaseViewController {
+    let mainView = TodoListView()
     let filterButton: UIButton = {
         let button = UIButton()
         button.setImage(ImageStyle.threeDot, for: .normal)
@@ -75,8 +75,8 @@ class TotalViewController: BaseViewController {
         filterButton.menu = UIMenu(children: [
             UIAction(title: Filter.total.title, state: .on, handler: selectedTotal),
             UIAction(title: Filter.deadLine.title, handler: selectedDeadLine),
-            UIAction(title: Filter.title.title, handler: selectedTotal),
-            UIAction(title: Filter.lowPriority.title, handler: selectedTotal),
+            UIAction(title: Filter.title.title, handler: selectedTitle),
+            UIAction(title: Filter.lowPriority.title, handler: selectedLowPriority),
             UIAction(title: Filter.highPriority.title, handler: selectedHighPriority)])
         filterButton.showsMenuAsPrimaryAction = true
         filterButton.changesSelectionAsPrimaryAction = true
@@ -134,7 +134,7 @@ class TotalViewController: BaseViewController {
     }
 }
 
-extension TotalViewController: UITableViewDelegate, UITableViewDataSource {
+extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todoList.count
     }
@@ -145,11 +145,15 @@ extension TotalViewController: UITableViewDelegate, UITableViewDataSource {
         }
         cell.selectionStyle = .none
         cell.backgroundColor = .black
-        cell.configureCell(todo: todoList[indexPath.row])
+        let row = todoList[indexPath.row]
         // 도큐먼트 폴더에 있는 이미지를 셀에 보여주기
-        if let image = loadImageToDocument(filename: "\(todoList[indexPath.row].id)") {
+        if let image = loadImageToDocument(filename: "\(row.id)") {
+            cell.selectedimageView.isHidden = false
             cell.selectedimageView.image = image
+        } else {
+            cell.selectedimageView.isHidden = true
         }
+        cell.configureCell(todo: row)
         
         return cell
     }
@@ -164,6 +168,7 @@ extension TotalViewController: UITableViewDelegate, UITableViewDataSource {
             (_,_, completionHandler) in
             let item = self.todoList[indexPath.row]
             self.showAlert(title: "삭제", message: "\(item.title)을 정말 삭제하시겠습니까?") {
+                self.removeImageFromDocument(filename: "\(item.id)")
                 self.deleteTodo(item: item)
             }
             completionHandler(true)

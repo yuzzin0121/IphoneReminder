@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TotalView: BaseView {
+class TodoListView: BaseView {
     let tableView = UITableView()
     
     override func configureHierarchy() {
@@ -24,6 +24,7 @@ class TotalView: BaseView {
         tableView.backgroundColor = .black
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
         tableView.rowHeight = 80
         tableView.register(TodoTableViewCell.self, forCellReuseIdentifier: TodoTableViewCell.identifier)
     }

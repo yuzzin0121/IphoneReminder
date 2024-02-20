@@ -8,11 +8,11 @@
 import UIKit
 
 enum ImageStyle {
-    static let lightbulbCircleFill = UIImage(systemName: "lightbulb.circle.fill")!
-    static let calendarCircleFill = UIImage(systemName: "calendar.circle.fill")!
-    static let trayCircleFill = UIImage(systemName: "tray.circle.fill")!
-    static let checkmarkCircleFill = UIImage(systemName: "checkmark.circle.fill")!
-    static let flagCircleFill = UIImage(systemName: "flag.circle.fill")!
+    static let lightbulb = UIImage(systemName: "lightbulb")!
+    static let calendar = UIImage(systemName: "calendar")!
+    static let tray = UIImage(systemName: "tray")!
+    static let checkmark = UIImage(systemName: "checkmark")!
+    static let flag = UIImage(systemName: "flag")!
     static let plusCircleFill = UIImage(systemName: "plus.circle.fill")!
 
     static let arrowRight = UIImage(systemName: "chevron.right")!
