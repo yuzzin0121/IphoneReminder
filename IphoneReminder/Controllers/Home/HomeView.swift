@@ -20,7 +20,7 @@ class HomeView: BaseView {
     }()
     
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViweFlowLayout())
-    let listTableView = UITableView()
+    let listTableView = UITableView(frame: .zero, style: .insetGrouped)
     
     private func configureCollectionViweFlowLayout()  -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
@@ -39,17 +39,18 @@ class HomeView: BaseView {
     
     override func configureLayout() {
         collectionView.snp.makeConstraints { make in
-            make.verticalEdges.equalTo(safeAreaLayoutGuide).inset(24)
+            make.top.equalTo(safeAreaLayoutGuide).inset(24)
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.greaterThanOrEqualTo(190)
+            make.height.equalTo(168)
         }
         
         listTableView.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).offset(24)
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(16)
+            make.top.equalTo(collectionView.snp.bottom)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(24)
         }
     }
+    
     
     override func configureView() {
         backgroundColor = .black
@@ -57,8 +58,14 @@ class HomeView: BaseView {
         collectionView.isScrollEnabled = false
         collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
         
-        listTableView.backgroundColor = .gray
+        listTableView.backgroundColor = .black
+        listTableView.layer.cornerRadius = 10
+        listTableView.clipsToBounds = true
+        listTableView.rowHeight = UITableView.automaticDimension
+        listTableView.estimatedRowHeight = 50
         listTableView.showsVerticalScrollIndicator = false
+        listTableView.contentInset = .zero
+        listTableView.contentInsetAdjustmentBehavior = .never
         listTableView.register(UITableViewCell.self, forCellReuseIdentifier: "listCell")
     }
 }

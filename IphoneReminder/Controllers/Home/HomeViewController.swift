@@ -28,6 +28,8 @@ final class HomeViewController: BaseViewController {
     var todoList: Results<TodoModel>!
     var totalCount = 0
     var todoTableRepository = TodoTableRepository()
+    var listTableRepository = ListTableRepository()
+    var listList: Results<ListItem>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +45,7 @@ final class HomeViewController: BaseViewController {
         getCompleted()
         getTodayTodo()
         getScheduleTodo()
+        getList()
     }
     
     func getCompleted() {
@@ -62,6 +65,11 @@ final class HomeViewController: BaseViewController {
     
     func getScheduleTodo() {
         categoryList[Kind.schedule.rawValue].count = todoTableRepository.fetchScheduleTodo().count
+    }
+    
+    func getList() {
+        listList = listTableRepository.fetch()
+        mainView.listTableView.reloadData()
     }
     
     func configureDelegate() {
@@ -141,13 +149,24 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return listList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "listCell") else {
-            return UITableViewCell()
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "listCell", for: indexPath)
+        let row = listList[indexPath.row]
+        cell.backgroundColor = ColorStyle.deepDarkGray
+        cell.contentView.backgroundColor = ColorStyle.deepDarkGray
+        cell.textLabel?.text = row.title
+        cell.textLabel?.textColor = .white
+        cell.textLabel?.font = .boldSystemFont(ofSize: 16)
+        cell.imageView?.image = ImageStyle.list
+        cell.imageView?.tintColor = .white
+        cell.imageView?.backgroundColor = UIColor(named: row.colorName)
+        
+        cell.imageView?.contentMode = .scaleAspectFit
+        cell.detailTextLabel?.text = "\(row.todos.count)"
+        
         
         
         return cell

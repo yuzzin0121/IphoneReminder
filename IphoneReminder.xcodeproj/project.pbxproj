@@ -63,6 +63,7 @@
 		6146496B2B7D39E100DA894C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6146496A2B7D39E100DA894C /* HomeView.swift */; };
 		6146496D2B7D39E700DA894C /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6146496C2B7D39E700DA894C /* BaseView.swift */; };
 		614649702B7D3B3800DA894C /* ImageStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6146496F2B7D3B3800DA894C /* ImageStyle.swift */; };
+		619DE9DC2B864245000A87EA /* ListItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619DE9DB2B864245000A87EA /* ListItemTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -119,6 +120,7 @@
 		6146496A2B7D39E100DA894C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		6146496C2B7D39E700DA894C /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		6146496F2B7D3B3800DA894C /* ImageStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStyle.swift; sourceTree = "<group>"; };
+		619DE9DB2B864245000A87EA /* ListItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +171,7 @@
 				611AA7962B7D67A5005DAC3B /* CategoryCollectionViewCell.swift */,
 				611AA7AD2B7E0B8A005DAC3B /* TodoTableViewCell.swift */,
 				611AA7CE2B83C4A7005DAC3B /* NaverImageCollectionViewCell.swift */,
+				619DE9DB2B864245000A87EA /* ListItemTableViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -485,6 +488,7 @@
 				611AA76E2B7D4670005DAC3B /* AddView.swift in Sources */,
 				611AA77D2B7D4D64005DAC3B /* MemoTableViewCell.swift in Sources */,
 				611AA7AC2B7E0976005DAC3B /* TodoListView.swift in Sources */,
+				619DE9DC2B864245000A87EA /* ListItemTableViewCell.swift in Sources */,
 				611AA7702B7D49BA005DAC3B /* ColorStyle.swift in Sources */,
 				611AA7CF2B83C4A7005DAC3B /* NaverImageCollectionViewCell.swift in Sources */,
 				611AA7E42B849EED005DAC3B /* TodoInfo.swift in Sources */,

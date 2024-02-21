@@ -24,4 +24,8 @@ final class ListTableRepository {
         }
     }
     
+    // Total
+    func fetch() -> Results<ListItem> {
+        return realm.objects(ListItem.self)
+    }
 }
