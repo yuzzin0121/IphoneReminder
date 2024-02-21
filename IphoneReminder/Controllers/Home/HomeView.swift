@@ -66,6 +66,6 @@ class HomeView: BaseView {
         listTableView.showsVerticalScrollIndicator = false
         listTableView.contentInset = .zero
         listTableView.contentInsetAdjustmentBehavior = .never
-        listTableView.register(UITableViewCell.self, forCellReuseIdentifier: "listCell")
+        listTableView.register(ListItemTableViewCell.self, forCellReuseIdentifier: ListItemTableViewCell.identifier)
     }
 }

@@ -46,6 +46,8 @@ final class HomeViewController: BaseViewController {
         getTodayTodo()
         getScheduleTodo()
         getList()
+        mainView.collectionView.reloadData()
+        mainView.listTableView.reloadData()
     }
     
     func getCompleted() {
@@ -56,7 +58,6 @@ final class HomeViewController: BaseViewController {
         todoList = todoTableRepository.fetch()
         categoryList[Kind.total.rawValue].count = todoList.count
         print(todoList.count)
-        mainView.collectionView.reloadData()
     }
     
     func getTodayTodo() {
@@ -69,7 +70,6 @@ final class HomeViewController: BaseViewController {
     
     func getList() {
         listList = listTableRepository.fetch()
-        mainView.listTableView.reloadData()
     }
     
     func configureDelegate() {
@@ -124,6 +124,7 @@ final class HomeViewController: BaseViewController {
     
 }
 
+// 카테고리 컬렉션뷰 설정
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return categoryList.count
@@ -147,27 +148,19 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 }
 
 
+// 리스트 테이블뷰 설정
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "listCell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ListItemTableViewCell.identifier, for: indexPath) as? ListItemTableViewCell else {
+            return UITableViewCell()
+        }
         let row = listList[indexPath.row]
-        cell.backgroundColor = ColorStyle.deepDarkGray
-        cell.contentView.backgroundColor = ColorStyle.deepDarkGray
-        cell.textLabel?.text = row.title
-        cell.textLabel?.textColor = .white
-        cell.textLabel?.font = .boldSystemFont(ofSize: 16)
-        cell.imageView?.image = ImageStyle.list
-        cell.imageView?.tintColor = .white
-        cell.imageView?.backgroundColor = UIColor(named: row.colorName)
         
-        cell.imageView?.contentMode = .scaleAspectFit
-        cell.detailTextLabel?.text = "\(row.todos.count)"
-        
-        
+        cell.configureCell(listItem: row)
         
         return cell
     }
