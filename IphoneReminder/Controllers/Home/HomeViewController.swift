@@ -84,7 +84,9 @@ final class HomeViewController: BaseViewController {
         addTodoVC.previousVC = PreviousVC.home
         addTodoVC.completionHandler = {
             self.getTodoData()
+            self.getList()
             self.mainView.collectionView.reloadData()
+            self.mainView.listTableView.reloadData()
         }
         let nav = UINavigationController(rootViewController: addTodoVC)
         present(nav, animated: true)
