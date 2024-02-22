@@ -45,10 +45,11 @@ class SearchImageView: BaseView {
         searchBar.barTintColor = .black
         searchBar.tintColor = .white
         searchBar.searchTextField.textColor = .lightGray
+        searchBar.backgroundColor = ColorStyle.darkBlack
         searchBar.searchTextField.backgroundColor = ColorStyle.deepDarkGray
         
         
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .darkBlack
         collectionView.showsVerticalScrollIndicator = false
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.register(NaverImageCollectionViewCell.self, forCellWithReuseIdentifier: NaverImageCollectionViewCell.identifier)

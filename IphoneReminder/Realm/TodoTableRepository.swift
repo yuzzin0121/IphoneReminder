@@ -106,20 +106,40 @@ final class TodoTableRepository {
     }
     
     // U
-    func updateItem(todoModel: TodoModel) {
-        do {
-            try realm.write {
-                realm.create(TodoModel.self,
-                             value: ["id": todoModel.id,
-                                     "title": todoModel.title ?? nil,
-                                     "memo": todoModel.memo ?? nil,
-                                     "deadLineDate": todoModel.deadLineDate ?? nil,
-                                     "tag": todoModel.tag ?? nil,
-                                     "priority": todoModel.priority ?? nil],
-                             update: .modified)
+    func updateItem(todoModel: TodoModel, listItem: ListItem?) {
+        if let title = todoModel.title, let deadLineDate = todoModel.deadLineDate, let tag = todoModel.tag, let priority = todoModel.priority {
+            print("\(listItem)있냐????")
+            print("\(todoModel.listItem.first)있냐고;;;;")
+            do {
+                try realm.write {
+                    realm.create(TodoModel.self,
+                                 value: ["id": todoModel.id,
+                                         "title": title,
+                                         "memo": todoModel.memo ?? nil,
+                                         "deadLineDate": deadLineDate,
+                                         "tag": tag,
+                                         "priority": priority],
+                                 update: .modified)
+                    print("todoModel 정상")
+                    if let todo = realm.object(ofType: TodoModel.self, forPrimaryKey: todoModel.id) {
+                        print("todo 있음")
+                        if let currentListItem = todo.listItem.first {
+                            print("currentListItem 있음")
+                            if listItem != nil {
+                                print("listItem 있음")
+                                if let index = currentListItem.todos.firstIndex(where: { $0.id == todo.id }) {
+                                    print("삭제할 인덱스 찾음")
+                                    currentListItem.todos.remove(at: index)
+                                    listItem!.todos.append(todo)
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print(error)
             }
-        } catch {
-            print(error)
         }
     }
     

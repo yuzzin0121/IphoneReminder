@@ -10,4 +10,6 @@ import Foundation
 class UserDefaultManager {
     static let shared = UserDefaultManager()
     private init() { }
+    
+    
 }

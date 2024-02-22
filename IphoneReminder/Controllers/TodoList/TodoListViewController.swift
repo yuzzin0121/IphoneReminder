@@ -201,13 +201,22 @@ class TodoListViewController: BaseViewController {
     
     func showAddTodoVC(item: TodoModel) {
         let addTodoVC = AddTodoViewController()
-        addTodoVC.currentTodo = TodoModel(title: item.title, memo: item.memo, deadLineDate: item.deadLineDate, tag: item.tag, priority: item.priority)
+        addTodoVC.currentTodo = item
+//        if let listItem = item.listItem.first {
+//            print("listItem - \(listItem.title)")
+//            addTodoVC.listItem = listItem
+//        }
         addTodoVC.previousVC = PreviousVC.list
         addTodoVC.image = loadImageToDocument(filename: "\(item.id)")
-        addTodoVC.completionHandler = {
+        addTodoVC.completionHandler = { [self] in
             if let type = self.type {
                 print("이씀")
                 self.getTodo(type: type)
+            } else {
+                if let listItem = self.listItem {
+                    self.listTodoList = listItem.todos
+                    mainView.tableView.reloadData()
+                }
             }
         }
         let nav = UINavigationController(rootViewController: addTodoVC)
@@ -218,7 +227,7 @@ class TodoListViewController: BaseViewController {
 // 테이블뷰 설정
 extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let type {
+        if type != nil {
             return todoList.count
         } else {
             return listTodoList.count
@@ -232,7 +241,7 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
         cell.selectionStyle = .none
         cell.backgroundColor = .black
         var row: TodoModel
-        if let type {
+        if type != nil {
             row = todoList[indexPath.row]
         } else {
             row = listTodoList[indexPath.row]

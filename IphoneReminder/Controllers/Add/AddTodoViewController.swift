@@ -87,7 +87,7 @@ class AddTodoViewController: BaseViewController {
         if !isValid { return }
         
         switch previousVC {
-        case .home:
+        case .home: // 추가일 경우
             if let listItem = listItem {
                 todoTableRepository.createItem(currentTodo, listItem: listItem)
             } else {
@@ -97,8 +97,14 @@ class AddTodoViewController: BaseViewController {
             if let image {
                 saveImageToDocument(image: image, filename: "\(currentTodo.id)")
             }
-        case .list:
-            todoTableRepository.updateItem(todoModel: currentTodo)
+        case .list: // 수정일 경우
+            if listItem != nil {
+                print("listItem nil 아님 - 할일 수정화면")
+                todoTableRepository.updateItem(todoModel: currentTodo, listItem: listItem)
+            } else {
+                print("listItem nil임 - 할일 수정화면")
+                todoTableRepository.updateItem(todoModel: currentTodo, listItem: nil)
+            }
             if let image {
                 saveImageToDocument(image: image, filename: "\(currentTodo.id)")
             }
@@ -192,6 +198,7 @@ class AddTodoViewController: BaseViewController {
         }
         selectListVC.completionHandler = { listItem in
             self.listItem = listItem
+            self.isValid = self.isValidValue()
             self.mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.list.rawValue, section: 0)], with: .automatic)
         }
         navigationController?.pushViewController(selectListVC, animated: true)
@@ -261,11 +268,17 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
             case TodoInfo.addImage.rawValue:
                 if let image {
                     cell.seletecimageView.image = image
+                } else {
+                    cell.seletecimageView.image = nil
                 }
             case TodoInfo.list.rawValue:
                 if let listItem {
                     value = listItem.title
-                    print(value)
+                    print("currentListItem: \(value)")
+                } else {
+                    if let listItem = currentTodo.listItem.first {
+                        value = listItem.title
+                    }
                 }
             default: break
             }

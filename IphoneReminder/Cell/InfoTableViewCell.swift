@@ -25,6 +25,11 @@ final class InfoTableViewCell: UITableViewCell {
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        seletecimageView.image = nil
+    }
+    
     func configureCell(title: String, value: String?) {
         titleLabel.text = title
         if let value = value {
