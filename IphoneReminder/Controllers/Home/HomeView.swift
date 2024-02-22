@@ -45,7 +45,7 @@ class HomeView: BaseView {
         }
         
         listTableView.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom)
+            make.top.equalTo(collectionView.snp.bottom).offset(24)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide).inset(24)
         }

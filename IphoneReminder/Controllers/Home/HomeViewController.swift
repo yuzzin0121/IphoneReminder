@@ -161,6 +161,15 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
 // 리스트 테이블뷰 설정
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let titleLabel = UILabel()
+        titleLabel.text = "나의 목록"
+        titleLabel.textColor = .white
+        titleLabel.font = .boldSystemFont(ofSize: 18)
+        
+        return titleLabel
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listList.count
     }

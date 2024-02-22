@@ -55,6 +55,8 @@
 		611AA7ED2B85077E005DAC3B /* ListTableRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611AA7EC2B85077E005DAC3B /* ListTableRepository.swift */; };
 		6135A9992B86C28900831B21 /* ListTodoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6135A9982B86C28900831B21 /* ListTodoListViewController.swift */; };
 		6135A99B2B86C29600831B21 /* ListTodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6135A99A2B86C29600831B21 /* ListTodoListView.swift */; };
+		6135A99D2B86D02000831B21 /* ColorItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6135A99C2B86D02000831B21 /* ColorItem.swift */; };
+		6135A9CC2B8741E500831B21 /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6135A9CB2B8741E500831B21 /* UserDefaultManager.swift */; };
 		614649132B7C704100DA894C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614649122B7C704100DA894C /* AppDelegate.swift */; };
 		614649152B7C704100DA894C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614649142B7C704100DA894C /* SceneDelegate.swift */; };
 		6146491A2B7C704100DA894C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 614649182B7C704100DA894C /* Main.storyboard */; };
@@ -115,6 +117,8 @@
 		611AA7EC2B85077E005DAC3B /* ListTableRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableRepository.swift; sourceTree = "<group>"; };
 		6135A9982B86C28900831B21 /* ListTodoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTodoListViewController.swift; sourceTree = "<group>"; };
 		6135A99A2B86C29600831B21 /* ListTodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTodoListView.swift; sourceTree = "<group>"; };
+		6135A99C2B86D02000831B21 /* ColorItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorItem.swift; sourceTree = "<group>"; };
+		6135A9CB2B8741E500831B21 /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		6146490F2B7C704100DA894C /* IphoneReminder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IphoneReminder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		614649122B7C704100DA894C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		614649142B7C704100DA894C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -276,6 +280,7 @@
 				611AA7E12B849DFD005DAC3B /* Filter.swift */,
 				611AA7E32B849EED005DAC3B /* TodoInfo.swift */,
 				611AA7E52B84C0B7005DAC3B /* Priority.swift */,
+				6135A99C2B86D02000831B21 /* ColorItem.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -401,6 +406,7 @@
 			children = (
 				6146496F2B7D3B3800DA894C /* ImageStyle.swift */,
 				611AA76F2B7D49BA005DAC3B /* ColorStyle.swift */,
+				6135A9CB2B8741E500831B21 /* UserDefaultManager.swift */,
 			);
 			path = Constant;
 			sourceTree = "<group>";
@@ -528,6 +534,7 @@
 				6146496B2B7D39E100DA894C /* HomeView.swift in Sources */,
 				611AA76A2B7D43E7005DAC3B /* UINavigationController+Extension.swift in Sources */,
 				611AA7852B7D5451005DAC3B /* MemoView.swift in Sources */,
+				6135A9CC2B8741E500831B21 /* UserDefaultManager.swift in Sources */,
 				611AA7882B7D5B15005DAC3B /* DeadLineDateViewController.swift in Sources */,
 				611AA7DA2B83C5E6005DAC3B /* NaverAPI.swift in Sources */,
 				611AA7BE2B828E92005DAC3B /* Kind.swift in Sources */,
@@ -535,6 +542,7 @@
 				611AA76C2B7D4663005DAC3B /* AddTodoViewController.swift in Sources */,
 				6146496D2B7D39E700DA894C /* BaseView.swift in Sources */,
 				614649132B7C704100DA894C /* AppDelegate.swift in Sources */,
+				6135A99D2B86D02000831B21 /* ColorItem.swift in Sources */,
 				611AA7EB2B84FF95005DAC3B /* AddListView.swift in Sources */,
 				611AA7972B7D67A5005DAC3B /* CategoryCollectionViewCell.swift in Sources */,
 				611AA7C72B83C140005DAC3B /* SearchImageViewController.swift in Sources */,

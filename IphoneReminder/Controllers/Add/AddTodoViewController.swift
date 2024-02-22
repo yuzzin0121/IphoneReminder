@@ -28,12 +28,6 @@ class AddTodoViewController: BaseViewController {
     var currentTodo = TodoModel(title: nil, memo: nil, deadLineDate: Date(), createdAt: nil, tag: nil, priority: nil)
     var listItem: ListItem? = nil
     var kindList = TodoInfo.allCases
-//    var todo: TodoModel? = nil
-//    var memoTitle: String?
-//    var memo: String?
-//    var deadLineDate = Date()
-//    var tag: String?
-//    var priority: String?
     var isValid: Bool = false {
         didSet {
             print(isValid)

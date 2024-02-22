@@ -39,7 +39,9 @@ class TodoListViewController: BaseViewController {
         }
     }
     
-    
+    func getListTodo() {
+        
+    }
     
     func getTodo(type: Kind) {
         switch type {
@@ -116,7 +118,6 @@ class TodoListViewController: BaseViewController {
         mainView.tableView.reloadData()
     }
     
-    /// <#Description#>
     private func getLowPrioirty() {
         let sortKey = Filter.lowPriority.sortKey
         switch type {
@@ -188,7 +189,14 @@ class TodoListViewController: BaseViewController {
 
     private func deleteTodo(item: TodoModel) {
         todoTableRepository.deleteItem(item)
-        getTotalTodo()
+        if type != nil {
+            getTotalTodo()
+        } else {
+            if let listItem = listItem {
+                listTodoList = listItem.todos
+                mainView.tableView.reloadData()
+            }
+        }
     }
     
     func showAddTodoVC(item: TodoModel) {
@@ -257,8 +265,14 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제하기") {
             (_,_, completionHandler) in
-            let item = self.todoList[indexPath.row]
-            self.showAlert(title: "삭제", message: "\(item.title)을 정말 삭제하시겠습니까?") {
+            var item: TodoModel
+            if let type = self.type {
+                item = self.todoList[indexPath.row]
+            } else {
+                item = self.listTodoList[indexPath.row]
+            }
+            
+            self.showAlert(title: "삭제", message: "\(item.title ?? "할 일")을 정말 삭제하시겠습니까?") {
                 self.removeImageFromDocument(filename: "\(item.id)")
                 self.deleteTodo(item: item)
             }

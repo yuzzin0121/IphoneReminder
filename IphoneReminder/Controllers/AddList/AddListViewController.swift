@@ -7,28 +7,6 @@
 
 import UIKit
 
-enum ColorItem: Int, CaseIterable {
-    case red
-    case orange
-    case yellow
-    case green
-    case blue
-    case purple
-    case brown
-    
-    var name: String {
-        switch self {
-        case .red: return "customRed"
-        case .orange: return "customOrange"
-        case .yellow: return "customYellow"
-        case .green: return "customGreen"
-        case .blue: return "customBlue"
-        case .purple: return "customPurple"
-        case .brown: return "customBrown"
-        }
-    }
-}
-
 class AddListViewController: BaseViewController {
     let mainView = AddListView()
     lazy var addButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addButtonClicked))
