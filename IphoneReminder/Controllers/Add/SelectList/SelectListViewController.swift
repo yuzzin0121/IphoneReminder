@@ -22,6 +22,9 @@ class SelectListViewController: UIViewController {
         configureNavigationItem()
         setDelegate()
         fetchList()
+        if let listItem = listItem {
+            mainView.messageLabel.text = "미리알림이 '\(listItem.title)'에 생성됩니다."
+        }
     }
     
     override func loadView() {

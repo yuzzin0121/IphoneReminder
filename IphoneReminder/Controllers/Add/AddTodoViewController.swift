@@ -193,8 +193,8 @@ class AddTodoViewController: BaseViewController {
     
     private func showSelectListVC() {
         let selectListVC = SelectListViewController()
-        if let listItem {
-            
+        if let listItem = currentTodo.listItem.first {
+            selectListVC.listItem = listItem
         }
         selectListVC.completionHandler = { listItem in
             self.listItem = listItem

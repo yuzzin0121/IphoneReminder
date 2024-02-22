@@ -27,7 +27,7 @@ class AddImageViewController: BaseViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if let image = selectedImageView.image {
+        if let image = currentImage {
             completionHandler?(image)
         }
     }
@@ -60,8 +60,10 @@ class AddImageViewController: BaseViewController {
     private func setImage(link: String) {
         if let url = URL(string: link) {
             selectedImageView.kf.setImage(with: url, placeholder: ImageStyle.photoFill)
+            currentImage = selectedImageView.image
         } else {
             selectedImageView.image = ImageStyle.photoFill
+            currentImage = nil
         }
     }
     
