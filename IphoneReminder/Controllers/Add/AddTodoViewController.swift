@@ -25,14 +25,15 @@ class AddTodoViewController: BaseViewController {
         button.title = title
         return button
     }()
-    
+    var currentTodo = TodoModel(title: nil, memo: nil, deadLineDate: Date(), createdAt: nil, tag: nil, priority: nil)
+    var listItem: ListItem? = nil
     var kindList = TodoInfo.allCases
-    var todo: TodoModel? = nil
-    var memoTitle: String?
-    var memo: String?
-    var deadLineDate = Date()
-    var tag: String?
-    var priority: String?
+//    var todo: TodoModel? = nil
+//    var memoTitle: String?
+//    var memo: String?
+//    var deadLineDate = Date()
+//    var tag: String?
+//    var priority: String?
     var isValid: Bool = false {
         didSet {
             print(isValid)
@@ -55,7 +56,7 @@ class AddTodoViewController: BaseViewController {
     }
     
     private func isValidValue() -> Bool {
-        if let memoTitle, let tag, let priority {
+        if let title = currentTodo.title, let tag = currentTodo.tag, let priority = currentTodo.priority {
             return true
         }
         return false
@@ -64,7 +65,7 @@ class AddTodoViewController: BaseViewController {
     @objc func setTag(notification: NSNotification) {
         let userInfo = notification.userInfo
         guard let value = userInfo?["tag"] as? String else { return }
-        tag = value
+        currentTodo.tag = value
         isValid = isValidValue()
         mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.tag.rawValue, section: 0)], with: .none)
     }
@@ -72,7 +73,7 @@ class AddTodoViewController: BaseViewController {
     @objc func setPrioirty(notification: NSNotification) {
         let userInfo = notification.userInfo
         guard let value = userInfo?["priority"] as? String else { return }
-        priority = value
+        currentTodo.priority = value
         isValid = isValidValue()
         mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.priority.rawValue, section: 0)], with: .none)
     }
@@ -87,24 +88,25 @@ class AddTodoViewController: BaseViewController {
         dismiss(animated: true)
     }
     
-    // 추가 버튼 클릭했을 때
+    // MARK: - 추가 버튼 클릭했을 때
     @objc func addButtonClicked() {
-        setTodo()
-    
-        guard let todo = todo else { return }
+        if !isValid { return }
         
         switch previousVC {
         case .home:
-            todoTableRepository.createItem(todo)
+            if let listItem = listItem {
+                todoTableRepository.createItem(currentTodo, listItem: listItem)
+            } else {
+                todoTableRepository.createItem(currentTodo, listItem: nil)
+            }
             // Filemanager를 통해 이미지 파일을 도큐먼트에 저장
             if let image {
-                saveImageToDocument(image: image, filename: "\(todo.id)")
+                saveImageToDocument(image: image, filename: "\(currentTodo.id)")
             }
         case .list:
-            todoTableRepository.updateItem(id: todo.id, title: todo.title, memo: todo.memo,
-                                           deadLineDate: todo.deadLineDate, tag: todo.tag, priority: todo.priority)
+            todoTableRepository.updateItem(todoModel: currentTodo)
             if let image {
-                saveImageToDocument(image: image, filename: "\(todo.id)")
+                saveImageToDocument(image: image, filename: "\(currentTodo.id)")
             }
         case nil:
             fatalError("왜 nil임??;;;ㅠㅠㅠ")
@@ -114,11 +116,11 @@ class AddTodoViewController: BaseViewController {
         dismiss(animated: true)
     }
     
-    func setTodo() {
-        if let memoTitle, let tag, let priority {
-            todo = TodoModel(title: memoTitle, memo: memo, deadLineDate: deadLineDate, createdAt: Date(), tag: tag, priority: priority)
-        }
-    }
+//    func setTodo() {
+//        if let memoTitle, let tag, let priority {
+//            currentTodo = TodoModel(title: memoTitle, memo: memo, deadLineDate: deadLineDate, createdAt: Date(), tag: tag, priority: priority)
+//        }
+//    }
     
     // 셀 클릭했을 때 타입에 따라 다른 화면으로 이동
     private func showEditVC(type: TodoInfo) {
@@ -133,17 +135,19 @@ class AddTodoViewController: BaseViewController {
             priorityVC()
         case .addImage:
             addImageVC()
+        case .list:
+            showSelectListVC()
         }
     }
     
     // 메모 편집 화면으로 이동
     private func showMemoVC() {
         let memoVC = MemoViewController()
-        memoVC.memoTitle = memoTitle
-        memoVC.memo = memo
+        memoVC.memoTitle = currentTodo.title
+        memoVC.memo = currentTodo.memo
         memoVC.completionHandler = { title, content in
-            self.memoTitle = title
-            self.memo = content
+            self.currentTodo.title = title
+            self.currentTodo.memo = content
             self.isValid = self.isValidValue()
             self.mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.memo.rawValue, section: 0)], with: .none)
         }
@@ -153,9 +157,9 @@ class AddTodoViewController: BaseViewController {
     // 마감일 편집 화면으로 이동
     private func showDeadLineDateVC() {
         let deadLineDateVC = DeadLineDateViewController()
-        deadLineDateVC.deadLineDate = deadLineDate
+        deadLineDateVC.deadLineDate = currentTodo.deadLineDate
         deadLineDateVC.completionHandler = { dateString in
-            self.deadLineDate = dateString
+            self.currentTodo.deadLineDate = dateString
             self.isValid = self.isValidValue()
             self.mainView.tableView.reloadRows(at: [IndexPath.init(row: TodoInfo.deadLineDate.rawValue, section: 0)], with: .none)
         }
@@ -165,7 +169,7 @@ class AddTodoViewController: BaseViewController {
     // 태그 편집 화면으로 이동
     private func showTagVC() {
         let tagVC = TagViewController()
-        tagVC.tag = tag
+        tagVC.tag = currentTodo.tag
         navigationController?.pushViewController(tagVC, animated: true)
     }
     
@@ -185,6 +189,18 @@ class AddTodoViewController: BaseViewController {
             self.mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.addImage.rawValue, section: 0)], with: .automatic)
         }
         navigationController?.pushViewController(addImageVC, animated: true)
+    }
+    
+    private func showSelectListVC() {
+        let selectListVC = SelectListViewController()
+        if let listItem {
+            
+        }
+        selectListVC.completionHandler = { listItem in
+            self.listItem = listItem
+            self.mainView.tableView.reloadRows(at: [IndexPath(row: TodoInfo.list.rawValue, section: 0)], with: .automatic)
+        }
+        navigationController?.pushViewController(selectListVC, animated: true)
     }
     
     private func changeFormat(date: Date) -> String? {
@@ -231,7 +247,7 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.selectionStyle = .none
             cell.backgroundColor = ColorStyle.darkBlack
-            cell.configureCell(title: memoTitle, memo: memo)
+            cell.configureCell(title: currentTodo.title, memo: currentTodo.memo)
             
             return cell
         } else {
@@ -243,14 +259,19 @@ extension AddTodoViewController: UITableViewDelegate, UITableViewDataSource {
             
             switch indexPath.row {
             case TodoInfo.deadLineDate.rawValue:
-                value = changeFormat(date: deadLineDate)
+                value = changeFormat(date: currentTodo.deadLineDate ?? Date())
             case TodoInfo.tag.rawValue:
-                value = tag
+                value = currentTodo.tag
             case TodoInfo.priority.rawValue:
-                value = priority
+                value = currentTodo.priority
             case TodoInfo.addImage.rawValue:
                 if let image {
                     cell.seletecimageView.image = image
+                }
+            case TodoInfo.list.rawValue:
+                if let listItem {
+                    value = listItem.title
+                    print(value)
                 }
             default: break
             }

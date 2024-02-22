@@ -38,6 +38,7 @@ class AddListViewController: BaseViewController {
     var listName: String?
     var canAddStatus = false
     var listTableRepository = ListTableRepository()
+    var completionHandler: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +69,7 @@ class AddListViewController: BaseViewController {
             let listItem = ListItem(title: listName, colorName: selectedColorName)
             listTableRepository.createItem(listItem)
         }
+        completionHandler?()
         dismiss(animated: true)
     }
     

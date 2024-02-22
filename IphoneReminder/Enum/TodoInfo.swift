@@ -13,6 +13,7 @@ enum TodoInfo: Int, CaseIterable {
     case tag
     case priority
     case addImage
+    case list
     
     var title: String {
         switch self {
@@ -21,13 +22,14 @@ enum TodoInfo: Int, CaseIterable {
         case .tag: return "태그"
         case .priority: return "우선 순위"
         case .addImage: return "이미지 추가"
+        case .list: return "목록"
         }
     }
     
     var cellHeight: CGFloat {
         switch self {
         case .memo: return 150
-        case .deadLineDate, .tag, .priority, .addImage:
+        case .deadLineDate, .tag, .priority, .addImage, .list:
             return 54
         }
     }

@@ -84,6 +84,7 @@ final class HomeViewController: BaseViewController {
         addTodoVC.previousVC = PreviousVC.home
         addTodoVC.completionHandler = {
             self.getTodoData()
+            self.mainView.collectionView.reloadData()
         }
         let nav = UINavigationController(rootViewController: addTodoVC)
         present(nav, animated: true)
@@ -93,7 +94,10 @@ final class HomeViewController: BaseViewController {
     // 목록 추가버튼 클릭했을 때
     @objc private func addListButtonClicked() {
         let addListVC = AddListViewController()
-    
+        addListVC.completionHandler = {
+            self.getList()
+            self.mainView.listTableView.reloadData()
+        }
         let nav = UINavigationController(rootViewController: addListVC)
         present(nav, animated: true)
     }
@@ -122,6 +126,11 @@ final class HomeViewController: BaseViewController {
         navigationController?.pushViewController(todoListVC, animated: true)
     }
     
+    private func showListDetailVC(list: ListItem) {
+        let todoListVC = TodoListViewController()
+        todoListVC.listItem = list
+        navigationController?.pushViewController(todoListVC, animated: true)
+    }
 }
 
 // 카테고리 컬렉션뷰 설정
@@ -165,5 +174,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = listList[indexPath.row]
+        showListDetailVC(list: row)
+    }
 }

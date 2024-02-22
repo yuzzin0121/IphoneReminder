@@ -13,10 +13,14 @@ final class TodoTableRepository {
     private let realm = try! Realm()
     
     // C
-    func createItem(_ item: TodoModel) {
+    func createItem(_ item: TodoModel, listItem: ListItem?) {
         print(realm.configuration.fileURL)
+        
         do {
             try realm.write {
+                if let listItem {
+                    listItem.todos.append(item)
+                }
                 realm.add(item)
                 print("Realm Create")
             }
@@ -102,17 +106,16 @@ final class TodoTableRepository {
     }
     
     // U
-    func updateItem(id: ObjectId, title: String, memo: String?,
-                    deadLineDate: Date, tag: String, priority: String) {
+    func updateItem(todoModel: TodoModel) {
         do {
             try realm.write {
                 realm.create(TodoModel.self,
-                             value: ["id": id,
-                                     "title": title,
-                                     "memo": memo ?? nil,
-                                     "deadLineDate": deadLineDate,
-                                     "tag": tag,
-                                     "priority": priority],
+                             value: ["id": todoModel.id,
+                                     "title": todoModel.title ?? nil,
+                                     "memo": todoModel.memo ?? nil,
+                                     "deadLineDate": todoModel.deadLineDate ?? nil,
+                                     "tag": todoModel.tag ?? nil,
+                                     "priority": todoModel.priority ?? nil],
                              update: .modified)
             }
         } catch {

@@ -14,8 +14,8 @@ class AddImageViewController: BaseViewController {
     let takeACamareaButton = AddImageButton()
     let searchImageButton = AddImageButton()
     var configuration = PHPickerConfiguration()
-    
-    var completionHandler: ((UIImage) -> Void)?
+    var currentImage: UIImage?
+    var completionHandler: ((UIImage?) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,6 +127,7 @@ extension AddImageViewController: UIImagePickerControllerDelegate, UINavigationC
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             selectedImageView.image = pickedImage
+            currentImage = selectedImageView.image
         }
         dismiss(animated: true)
     }

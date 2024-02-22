@@ -17,8 +17,11 @@ class TodoListViewController: BaseViewController {
     }()
     let filterList = Filter.allCases
     var todoList: Results<TodoModel>!
+    var listTodoList: List<TodoModel>!
+    var listItem: ListItem? = nil
     var todoTableRepository = TodoTableRepository()
     var type: Kind? = nil
+    var previousType: PreviousType? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,8 +31,15 @@ class TodoListViewController: BaseViewController {
         if let type {
             print("이씀")
             getTodo(type: type)
+        } else {
+            if let listItem {
+                listTodoList = listItem.todos
+                mainView.tableView.reloadData()
+            }
         }
     }
+    
+    
     
     func getTodo(type: Kind) {
         switch type {
@@ -106,6 +116,7 @@ class TodoListViewController: BaseViewController {
         mainView.tableView.reloadData()
     }
     
+    /// <#Description#>
     private func getLowPrioirty() {
         let sortKey = Filter.lowPriority.sortKey
         switch type {
@@ -157,6 +168,9 @@ class TodoListViewController: BaseViewController {
         } else {
             navigationItem.title = "전체"
         }
+        if let listItem {
+            navigationItem.title = "\(listItem.title)"
+        }
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         let filterbutton = filterButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: filterbutton)
@@ -179,12 +193,8 @@ class TodoListViewController: BaseViewController {
     
     func showAddTodoVC(item: TodoModel) {
         let addTodoVC = AddTodoViewController()
+        addTodoVC.currentTodo = TodoModel(title: item.title, memo: item.memo, deadLineDate: item.deadLineDate, tag: item.tag, priority: item.priority)
         addTodoVC.previousVC = PreviousVC.list
-        addTodoVC.memoTitle = item.title
-        addTodoVC.memo = item.memo
-        addTodoVC.deadLineDate = item.deadLineDate
-        addTodoVC.tag = item.tag
-        addTodoVC.priority = item.priority
         addTodoVC.image = loadImageToDocument(filename: "\(item.id)")
         addTodoVC.completionHandler = {
             if let type = self.type {
@@ -200,7 +210,11 @@ class TodoListViewController: BaseViewController {
 // 테이블뷰 설정
 extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todoList.count
+        if let type {
+            return todoList.count
+        } else {
+            return listTodoList.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -209,7 +223,13 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
         }
         cell.selectionStyle = .none
         cell.backgroundColor = .black
-        let row = todoList[indexPath.row]
+        var row: TodoModel
+        if let type {
+            row = todoList[indexPath.row]
+        } else {
+            row = listTodoList[indexPath.row]
+        }
+        
         // 도큐먼트 폴더에 있는 이미지를 셀에 보여주기
         if let image = loadImageToDocument(filename: "\(row.id)") {
             cell.selectedimageView.isHidden = false
@@ -225,7 +245,12 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = todoList[indexPath.row]
+        var item: TodoModel
+        if let type {
+            item = todoList[indexPath.row]
+        } else {
+            item = listTodoList[indexPath.row]
+        }
         showAddTodoVC(item: item)
     }
     

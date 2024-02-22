@@ -1,19 +1,18 @@
 //
-//  ListItemTableViewCell.swift
+//  SelectListTableViewCell.swift
 //  IphoneReminder
 //
-//  Created by 조유진 on 2/21/24.
+//  Created by 조유진 on 2/22/24.
 //
 
 import UIKit
 import SnapKit
 
-class ListItemTableViewCell: UITableViewCell {
+class SelectListTableViewCell: UITableViewCell {
     let listImageBackgroundView = UIView()
     let listImageView = UIImageView()
     let listTitelLabel = UILabel()
-    let detailLabel = UILabel()
-    let arrowImageView = UIImageView()
+    let checkImageView = UIImageView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -22,8 +21,14 @@ class ListItemTableViewCell: UITableViewCell {
         configureView()
     }
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        checkImageView.image = selected ? ImageStyle.checkmark : nil
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
+        checkImageView.image = nil
         configureCell(listItem: nil)
     }
     
@@ -32,7 +37,6 @@ class ListItemTableViewCell: UITableViewCell {
         listImageBackgroundView.backgroundColor = UIColor(named: listItem.colorName)
         listImageView.backgroundColor = UIColor(named: listItem.colorName)
         listTitelLabel.text = listItem.title
-        detailLabel.text = "\(listItem.todos.count)"
     }
     
     required init?(coder: NSCoder) {
@@ -40,7 +44,7 @@ class ListItemTableViewCell: UITableViewCell {
     }
     
     private func configureHierarchy() {
-        [listImageBackgroundView, listTitelLabel, detailLabel, arrowImageView].forEach {
+        [listImageBackgroundView, listTitelLabel, checkImageView].forEach {
             contentView.addSubview($0)
         }
         
@@ -50,31 +54,26 @@ class ListItemTableViewCell: UITableViewCell {
         listImageBackgroundView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview().offset(14)
-            make.size.equalTo(26)
+            make.size.equalTo(30)
         }
         listImageView.snp.makeConstraints { make in
             make.center.equalTo(listImageBackgroundView)
-            make.size.equalTo(18)
+            make.size.equalTo(20)
         }
         listTitelLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(listImageBackgroundView.snp.trailing).offset(12)
-            make.trailing.equalTo(detailLabel.snp.leading).offset(-8)
+            make.trailing.equalTo(checkImageView.snp.leading).offset(-8)
             make.height.equalTo(16)
         }
-        arrowImageView.snp.makeConstraints { make in
+        checkImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(14)
-            make.size.equalTo(16)
-        }
-        detailLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.trailing.equalTo(arrowImageView.snp.leading).offset(-12)
-            make.height.equalTo(16)
+            make.size.equalTo(20)
         }
     }
     private func configureView() {
-        contentView.backgroundColor = ColorStyle.deepDarkGray
+        contentView.backgroundColor = ColorStyle.darkBlack
         
         listTitelLabel.textColor = .white
         listTitelLabel.font = .systemFont(ofSize: 16, weight: .semibold)
@@ -85,12 +84,8 @@ class ListItemTableViewCell: UITableViewCell {
         listImageView.backgroundColor = .darkGray
         listImageView.contentMode = .scaleAspectFit
         
-        detailLabel.textColor = .systemGray5
-        detailLabel.font = .systemFont(ofSize: 14)
-        
-        arrowImageView.image = ImageStyle.arrowRight
-        arrowImageView.contentMode = .scaleAspectFit
-        arrowImageView.tintColor = .systemGray2
+        checkImageView.contentMode = .scaleAspectFit
+        checkImageView.tintColor = .systemBlue
     }
     
     override func draw(_ rect: CGRect) {

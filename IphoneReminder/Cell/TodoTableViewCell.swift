@@ -28,14 +28,17 @@ class TodoTableViewCell: UITableViewCell {
     
     func configureCell(todo: TodoModel?) {
         guard let todo = todo else { return }
-        let priorityString = getPriorityString(priority: todo.priority)
-        titleLabel.text = "\(priorityString) \(todo.title)"
-        titleLabel.asColor(targetString: priorityString, color: .systemBlue)
-        if let memo = todo.memo {
-            memoLabel.text = memo
+        if let priority = todo.priority, let title = todo.title {
+            let priorityString = getPriorityString(priority: priority)
+            titleLabel.text = "\(priorityString) \(title)"
+            titleLabel.asColor(targetString: priorityString, color: .systemBlue)
         }
-        deadLineDateLabel.text = changeFormat(date: todo.deadLineDate)
-        tagLabel.text = "#\(todo.tag)"
+        
+        if let memo = todo.memo, let deadLineDate = todo.deadLineDate, let tag = todo.tag {
+            memoLabel.text = memo
+            deadLineDateLabel.text = changeFormat(date: deadLineDate)
+            tagLabel.text = "#\(tag)"
+        }
         
         let image = todo.isCompleted ? ImageStyle.checkCircle : ImageStyle.circle
         isCompletedIcon.setImage(image, for: .normal)

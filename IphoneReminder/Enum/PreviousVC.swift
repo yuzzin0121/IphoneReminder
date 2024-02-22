@@ -11,3 +11,8 @@ enum PreviousVC {
     case home
     case list
 }
+
+enum PreviousType {
+    case category
+    case list
+}
