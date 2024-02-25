@@ -23,6 +23,9 @@ class AddImageViewController: BaseViewController {
         configureHierarchy()
         configureLayout()
         configureView()
+        if let currentImage {
+            selectedImageView.image = currentImage
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {

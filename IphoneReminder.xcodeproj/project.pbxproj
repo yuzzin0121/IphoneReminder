@@ -71,6 +71,7 @@
 		617566862B86673400D8A67F /* SelectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617566852B86673400D8A67F /* SelectListView.swift */; };
 		617566882B86681A00D8A67F /* SelectListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617566872B86681A00D8A67F /* SelectListTableViewCell.swift */; };
 		619DE9DC2B864245000A87EA /* ListItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619DE9DB2B864245000A87EA /* ListItemTableViewCell.swift */; };
+		61B3444A2B8B8A7500BDFD16 /* EnlargeImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B344492B8B8A7500BDFD16 /* EnlargeImageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -135,6 +136,7 @@
 		617566852B86673400D8A67F /* SelectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectListView.swift; sourceTree = "<group>"; };
 		617566872B86681A00D8A67F /* SelectListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectListTableViewCell.swift; sourceTree = "<group>"; };
 		619DE9DB2B864245000A87EA /* ListItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemTableViewCell.swift; sourceTree = "<group>"; };
+		61B344492B8B8A7500BDFD16 /* EnlargeImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnlargeImageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -249,6 +251,7 @@
 			children = (
 				611AA7C82B83C155005DAC3B /* Search */,
 				611AA7942B7D64F7005DAC3B /* AddImageViewController.swift */,
+				61B344492B8B8A7500BDFD16 /* EnlargeImageViewController.swift */,
 			);
 			path = Image;
 			sourceTree = "<group>";
@@ -527,6 +530,7 @@
 				611AA77D2B7D4D64005DAC3B /* MemoTableViewCell.swift in Sources */,
 				611AA7AC2B7E0976005DAC3B /* TodoListView.swift in Sources */,
 				619DE9DC2B864245000A87EA /* ListItemTableViewCell.swift in Sources */,
+				61B3444A2B8B8A7500BDFD16 /* EnlargeImageViewController.swift in Sources */,
 				611AA7702B7D49BA005DAC3B /* ColorStyle.swift in Sources */,
 				611AA7CF2B83C4A7005DAC3B /* NaverImageCollectionViewCell.swift in Sources */,
 				611AA7E42B849EED005DAC3B /* TodoInfo.swift in Sources */,

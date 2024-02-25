@@ -183,6 +183,7 @@ class AddTodoViewController: BaseViewController {
     // 이미지 추가 화면으로 이동
     private func addImageVC() {
         let addImageVC = AddImageViewController()
+        addImageVC.currentImage = image
         addImageVC.completionHandler = { image in
             self.image = image
             self.isValid = self.isValidValue()
